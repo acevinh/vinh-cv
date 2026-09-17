@@ -206,17 +206,21 @@ export const TIMELINE: TimelineNode[] = [
     current: true,
     bullets: {
       en: [
-        'Ship features end to end across a NestJS 11 + TypeScript API and a React 18 + TypeScript frontend.',
-        'Refactor and extend code I did not write, on an app that has been live for merchants since 2020.',
+        'Ship features end to end across a NestJS 11 + TypeScript API, its BullMQ workers, and a React 18 + TypeScript frontend.',
+        'Replaced a one-shot catalog check with a retry chain and a visible ETA, after measuring that an ad channel’s own ingest delay — not a rejection — was behind most “product not found” results. Verified on a full-scale sync before release: every row still unindexed when the scan ran cleared on the first retry.',
+        'Built the category mapping between a commerce platform’s taxonomy and Google’s, bringing coverage to 99.5% — measured against the two published taxonomies rather than estimated.',
         'Build the frontend against a generated API client, so a backend contract change is coordinated across both repos in a single change instead of breaking the client silently.',
         'Build embedded Shopify app surfaces with Polaris and the Admin GraphQL API.',
+        'Keep a 314-case QA ledger across seven feature areas, so a regression is caught by re-running cases instead of by remembering them.',
         'Run AI agents against a written process I maintain — the same rules published in claude-skills.',
       ],
       vi: [
-        'Triển khai tính năng đầu-cuối trên API NestJS 11 + TypeScript và frontend React 18 + TypeScript.',
-        'Refactor và mở rộng phần code không do mình viết, trên một app đã chạy thật cho merchant từ 2020.',
+        'Triển khai tính năng đầu-cuối trên API NestJS 11 + TypeScript, các worker BullMQ của nó, và frontend React 18 + TypeScript.',
+        'Thay phép kiểm catalog một-lần-ăn-ngay bằng chuỗi retry kèm ETA hiển thị được, sau khi đo ra rằng phần lớn kết quả “không tìm thấy sản phẩm” đến từ độ trễ nạp dữ liệu của chính kênh quảng cáo, chứ không phải bị từ chối. Kiểm trên một lần sync đầy đủ quy mô trước khi release: mọi dòng chưa kịp index lúc scan chạy đều sạch ngay lần retry đầu.',
+        'Xây bảng ánh xạ category giữa taxonomy của một nền tảng thương mại và của Google, nâng độ phủ lên 99,5% — đo trên hai bộ taxonomy đã công bố chứ không phải ước lượng.',
         'Frontend build trên API client sinh tự động, nên mọi thay đổi hợp đồng API phía backend được đồng bộ hai repo trong cùng một thay đổi, thay vì làm hỏng client một cách âm thầm.',
         'Xây giao diện Shopify embedded app bằng Polaris và Admin GraphQL API.',
+        'Duy trì ledger QA 314 case trên bảy mảng tính năng, để bắt regression bằng cách chạy lại case thay vì bằng trí nhớ.',
         'Vận hành AI agent theo bộ quy trình do tôi tự viết và duy trì — chính là bộ đã public ở claude-skills.',
       ],
     },
@@ -231,8 +235,8 @@ export const TIMELINE: TimelineNode[] = [
         reviews: '110',
         meta: { en: 'Live since 2020', vi: 'Chạy thật từ 2020' },
         blurb: {
-          en: "I've worked on this one since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.",
-          vi: 'Tôi làm trên sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.',
+          en: "A merchant connects a store; the app maps their catalog onto each ad channel's product schema, pushes it, then reads the channel's verdict back and turns rejections into something the merchant can act on. Syncing runs as queued background jobs rather than in the request, with the store as the source of truth and progress streamed to the embedded admin. I've worked on it since my internship, across the NestJS API and the React admin UI.",
+          vi: 'Merchant kết nối cửa hàng; app ánh xạ catalog của họ sang schema sản phẩm của từng kênh quảng cáo, đẩy lên, rồi đọc phán quyết của kênh về và biến các lỗi bị từ chối thành thứ merchant xử lý được. Việc đồng bộ chạy bằng job nền xếp hàng thay vì chạy trong request, lấy cửa hàng làm nguồn sự thật và stream tiến độ về giao diện quản trị nhúng. Tôi làm trên sản phẩm này từ kỳ thực tập, trên cả API NestJS lẫn giao diện quản trị React.',
         },
       },
       {
