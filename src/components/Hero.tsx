@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { HERO, IDENTITY } from '../content';
 import type { Lang } from '../content';
 import { t } from '../hooks/useLang';
+import { GitHubMark } from './PlatformLogos';
 import './Hero.css';
 
 interface HeroProps {
@@ -74,6 +75,9 @@ export default function Hero({ lang }: HeroProps): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
             >
+              {/* The only button on the page carrying a mark, and deliberately:
+                  the other two name an action, this one names a destination. */}
+              <GitHubMark height={16} className="btn__mark" />
               {t(HERO.ctaGithub, lang)}
             </a>
           </div>

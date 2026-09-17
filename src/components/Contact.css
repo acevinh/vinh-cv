@@ -37,12 +37,22 @@
   margin-top: var(--s-5);
 }
 
+/* The icon sits INSIDE the link so the whole thing is one target, but the rule
+   lives on the text span — an underline running under a glyph reads as a
+   mistake, and this is the largest non-heading type on the page. */
 .contact__address {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
   font-family: var(--font-mono);
   font-size: var(--fs-h3);
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--text-1);
+  text-decoration: none;
+}
+
+.contact__address-text {
   overflow-wrap: anywhere;
   user-select: text;
   text-decoration: underline;
@@ -51,8 +61,26 @@
   transition: text-decoration-color var(--d-micro) var(--ease);
 }
 
-.contact__address:hover {
+.contact__address:hover .contact__address-text {
   text-decoration-color: currentColor;
+}
+
+/* Leading marks: the envelope before the address, GitHub's before the handle.
+   Both sized in `em` so they track whatever type they lead. */
+.contact__lead-icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  color: var(--text-2);
+}
+
+.contact__address .contact__lead-icon {
+  color: var(--text-2);
+  transition: color var(--d-micro) var(--ease);
+}
+
+.contact__address:hover .contact__lead-icon {
+  color: var(--text-1);
 }
 
 @media (min-width: 768px) {
@@ -62,8 +90,22 @@
   }
 }
 
-/* ---- copy button -------------------------------------------------------- */
+/* ---- the actions -------------------------------------------------------- */
 
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+/* The page's second accent CTA, and the only other one (DESIGN.md §1): the hero
+   button points here, this one actually does the thing. Sitting next to a glass
+   button is what makes it read as the action rather than as a second option —
+   so the two have to be the same size, and only weight and fill separate them.
+   The accent's own `font-weight: 600` does the rest. */
+.contact__send,
 .contact__copy {
   flex: none;
   font-size: var(--fs-small);
@@ -88,18 +130,27 @@
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
+  gap: var(--s-2);
   margin-top: var(--s-6);
   color: var(--text-2);
+  text-decoration: none;
+  transition: color var(--d-micro) var(--ease);
+}
+
+/* Same reason as the address: the underline belongs to the handle, not to the
+   octocat sitting in front of it. */
+.contact__github-text {
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--text-3) 60%, transparent);
   text-underline-offset: var(--s-1);
-  transition:
-    color var(--d-micro) var(--ease),
-    text-decoration-color var(--d-micro) var(--ease);
+  transition: text-decoration-color var(--d-micro) var(--ease);
 }
 
 .contact__github:hover {
   color: var(--text-1);
+}
+
+.contact__github:hover .contact__github-text {
   text-decoration-color: currentColor;
 }
 
@@ -111,7 +162,10 @@
     border: none !important;
   }
 
-  .contact__copy {
+  /* Icons cost ink and say nothing the adjacent text does not: on paper this
+     block is already "email · handle". The buttons go with `.no-print`; what is
+     left here is the marks that lead the two text runs. */
+  .contact__lead-icon {
     display: none !important;
   }
 

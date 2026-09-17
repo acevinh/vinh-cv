@@ -293,6 +293,16 @@ p {
   transform: scale(0.975);
 }
 
+/* A brand mark leading a button label. Sized in `em` so it tracks the label,
+   and pulled to the optical baseline — a solid mark at the same box height as
+   the text reads a touch heavy otherwise. */
+.btn__mark {
+  flex: none;
+  width: 1.08em;
+  height: 1.08em;
+  margin-inline-start: -2px;
+}
+
 .btn--accent {
   background: var(--accent);
   color: var(--accent-ink);
@@ -335,18 +345,29 @@ p {
   transform: none;
 }
 
-/* ---- theme change: a reveal, not a flash ----------------------------- *
+/* ---- theme change: a bloom, not a flash ------------------------------ *
    See useTheme.ts for why this exists rather than more transitions. The old
-   frame is held still underneath and the new one is wiped in by a circle
-   growing out of the toggle. One animated property, on the compositor.
+   frame is held still underneath and the new one arrives as light spreading
+   out of the toggle that was just pressed.
 
    `[data-vt='theme']` is set for the duration of the transition only, so these
    rules can never leak onto some other view transition added later. */
 
+/* The reveal radius, as a fraction of the gradient's own radius — so it means
+   the same thing on a phone and on a 1440 screen. It has to be REGISTERED:
+   an unregistered custom property is a token substitution, and a gradient
+   rebuilt from a substituted token snaps from one value to the next instead of
+   interpolating. */
+@property --vt-r {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
 :root[data-vt='theme']::view-transition-old(root),
 :root[data-vt='theme']::view-transition-new(root) {
-  /* Kill the UA's default cross-fade — running it under the wipe turns the
-     boundary into a smear instead of an edge. */
+  /* Kill the UA's default cross-fade — it fades the whole screen underneath
+     the bloom, so the middle of the transition collapses to flat grey. */
   animation: none;
   mix-blend-mode: normal;
 }
@@ -357,20 +378,94 @@ p {
 
 :root[data-vt='theme']::view-transition-new(root) {
   z-index: 1;
-  animation: theme-reveal var(--d-theme) var(--ease) forwards;
+  /* No straight line and no box edge anywhere in this.
+
+     Two earlier versions both produced a hard edge, and both had to be seen to
+     be believed — Playwright cannot screenshot a ::view-transition layer, so
+     they were reproduced over two real captured frames in a plain page.
+     `clip-path: inset()` can only make a vertical rule. Sliding an oversized
+     static gradient with `mask-position` looks soft in the middle, but the mask
+     image's OWN BOX eventually slides into frame: a hard-cornered rectangle of
+     the new theme appeared over the old one about four fifths of the way
+     through.
+
+     So the box is pinned to the layer — `mask-size: 100% 100%` puts its edges
+     exactly on the screen edges, where an edge cannot be seen — and what moves
+     is the gradient's radius instead of the box. That needs a registered
+     property, which is the one thing the previous note said to avoid; it is
+     worth its raster cost here because it is what makes the shape correct, and
+     the mask is now viewport-sized rather than 2.6× viewport.
+
+     The stops are wide on purpose. A narrow front is an EDGE, and an edge is
+     something the eye can lock onto and follow — which is what turns a dropped
+     frame into a visible stutter. Spread across 42% of the radius there is
+     nothing to track, only light arriving. */
+  mask-image: radial-gradient(
+    circle at var(--vt-x, 50%) var(--vt-y, 0%),
+    #000 0%,
+    #000 calc(var(--vt-r) * 0.58),
+    rgba(0, 0, 0, 0.55) calc(var(--vt-r) * 0.75),
+    rgba(0, 0, 0, 0.14) calc(var(--vt-r) * 0.9),
+    rgba(0, 0, 0, 0) var(--vt-r)
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at var(--vt-x, 50%) var(--vt-y, 0%),
+    #000 0%,
+    #000 calc(var(--vt-r) * 0.58),
+    rgba(0, 0, 0, 0.55) calc(var(--vt-r) * 0.75),
+    rgba(0, 0, 0, 0.14) calc(var(--vt-r) * 0.9),
+    rgba(0, 0, 0, 0) var(--vt-r)
+  );
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  /* NOT var(--ease). The page's curve is cubic-bezier(0.22, 1, 0.36, 1), a hard
+     ease-out that covers most of its distance in the first third and then
+     crawls. On a 16px knob that reads as settling; stretched across a whole
+     screen the long tail reads as a stall — which is exactly the stutter this
+     was reported for. This wants near-constant speed, eased only at the ends. */
+  animation: theme-bloom var(--d-theme) cubic-bezier(0.4, 0.02, 0.28, 1) forwards;
 }
 
-/* A left-to-right wipe across the whole page, not a flourish on the control.
-   `inset()` animates on the compositor and needs no extra element: the new
-   theme is clipped to zero width at the left edge and opened to full width. */
-@keyframes theme-reveal {
+@keyframes theme-bloom {
   from {
-    clip-path: inset(0 100% 0 0);
+    --vt-r: 0%;
+    /* Without this the opening frames punch a hole. Going light → dark, the new
+       scene's darkest corner arrives at full strength inside a bright page and
+       reads as an ink stain rather than a change of light. Fading the layer up
+       over the first stretch costs nothing — opacity is a compositor property —
+       and it is what makes the two directions look like the same gesture. */
+    opacity: 0;
+  }
+
+  42% {
+    opacity: 1;
   }
 
   to {
-    clip-path: inset(0 0 0 0);
+    /* 178%, not 100%: every stop is a fraction of this, so the opaque core at
+       0.58 only reaches the far corner at 103%. Verified by compositing the
+       final frame against the destination theme — zero pixels differ, so
+       nothing is left un-revealed to pop when the layers are torn down. */
+    --vt-r: 178%;
+    opacity: 1;
   }
+}
+
+/* Measured: the page's own ceiling under software rasterisation is 40fps,
+   because the aurora is animating four large layers the whole time. Running a
+   full-page view transition on top of that drops it to ~22fps; pausing the
+   blobs and dropping the grain for the 560ms the transition lasts puts it back
+   to ~28fps, and neither is visible because the transition is covering the
+   screen anyway. This was the only change that moved the number — the choice of
+   wipe technique did not (27 vs 28fps across three implementations). */
+:root[data-vt='theme'] .aurora__blob {
+  animation-play-state: paused !important;
+}
+
+:root[data-vt='theme'] .grain {
+  display: none !important;
 }
 
 /* The new layer is LIVE DOM, not a snapshot, so any colour transition still
@@ -386,9 +481,15 @@ p {
   transition: none !important;
 }
 
+/* useTheme already refuses to start a view transition under this preference, so
+   this is the second line of defence: if the setting flips mid-transition, the
+   new frame must still land whole rather than freeze behind a half-grown mask. */
 @media (prefers-reduced-motion: reduce) {
   :root[data-vt='theme']::view-transition-new(root) {
     animation: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+    opacity: 1;
   }
 }
 

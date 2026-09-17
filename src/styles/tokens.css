@@ -142,7 +142,7 @@
      knob travel and its icon crossfade all read from this, so the switch and
      the control it came from are the same gesture rather than two animations
      that happen to overlap. Change it here and all three stay in step. */
-  --d-theme: 400ms;
+  --d-theme: 560ms;
 }
 
 @media (min-width: 768px) {

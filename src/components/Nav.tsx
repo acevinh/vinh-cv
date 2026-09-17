@@ -11,7 +11,8 @@ interface NavProps {
   lang: Lang;
   setLang: (l: Lang) => void;
   theme: Theme;
-  toggleTheme: () => void;
+  /** `origin` is where the theme bloom starts — see useTheme. */
+  toggleTheme: (origin?: DOMRect) => void;
 }
 
 /** Both language codes, derived from the `Lang` union rather than typed as copy. */
@@ -181,7 +182,10 @@ export default function Nav({ lang, setLang, theme, toggleTheme }: NavProps): JS
             className={`toggle${isLight ? ' is-light' : ''}`}
             aria-pressed={isLight}
             aria-label={t(UI.themeLabel, lang)}
-            onClick={toggleTheme}
+            // The rect, not the pointer: a keyboard activation has no
+            // coordinates, and the bloom should start from the control either
+            // way. The nav is `fixed`, so this is already viewport-relative.
+            onClick={(e) => toggleTheme(e.currentTarget.getBoundingClientRect())}
           >
             <span className="toggle__track" aria-hidden="true">
               <span className="toggle__knob">

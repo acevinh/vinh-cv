@@ -2,7 +2,27 @@ import { CONTACT, IDENTITY } from '../content';
 import type { Lang } from '../content';
 import { t } from '../hooks/useLang';
 import { useCopy } from '../hooks/useCopy';
+import { GitHubMark } from './PlatformLogos';
 import './Contact.css';
+
+/** Hand-drawn to match every other icon on the page — 20×20, 1.6 stroke. */
+function IconMail({ className = 'contact__lead-icon' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2.4" y="4.6" width="15.2" height="10.8" rx="2.2" />
+      <path d="m3.4 6.4 5.5 4.1a1.8 1.8 0 0 0 2.2 0l5.5-4.1" />
+    </svg>
+  );
+}
 
 function IconCopy() {
   return (
@@ -74,11 +94,24 @@ export default function Contact({ lang }: { lang: Lang }) {
           <div className="contact__panel glass glass--interactive reveal">
             <p className="contact__lede muted">{t(CONTACT.lede, lang)}</p>
 
+            {/* No target="_blank" on either mailto: one handled by a desktop
+                mail client would otherwise leave an empty tab behind. */}
             <div className="contact__address-row">
-              {/* No target="_blank": a mailto handled by a desktop mail client
-                  would otherwise leave an empty tab behind. */}
               <a className="contact__address" href={mailto}>
-                {IDENTITY.email}
+                <IconMail />
+                <span className="contact__address-text">{IDENTITY.email}</span>
+              </a>
+            </div>
+
+            {/* The address stays a link — it is the thing to read, and it has to
+                stay selectable. But reading an address is not the action, so the
+                action gets its own control instead of hiding inside the text.
+                Own row, because three items on one line wrapped awkwardly at
+                around 1100px. */}
+            <div className="contact__actions no-print">
+              <a className="btn btn--accent contact__send" href={mailto}>
+                <IconMail className="contact__icon" />
+                <span>{t(CONTACT.send, lang)}</span>
               </a>
 
               <button
@@ -107,7 +140,8 @@ export default function Contact({ lang }: { lang: Lang }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {IDENTITY.githubHandle}
+              <GitHubMark height={15} className="contact__lead-icon" />
+              <span className="contact__github-text">{IDENTITY.githubHandle}</span>
               <IconArrow />
             </a>
           </div>

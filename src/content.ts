@@ -449,7 +449,8 @@ export const CONTACT = {
     en: 'Open to Fullstack Developer roles. The fastest way to reach me is email.',
     vi: 'Đang tìm vị trí Fullstack Developer. Cách nhanh nhất để liên hệ là email.',
   } satisfies L,
-  copy: { en: 'Copy', vi: 'Sao chép' } satisfies L,
+  send: { en: 'Send email', vi: 'Gửi email' } satisfies L,
+  copy: { en: 'Copy address', vi: 'Sao chép' } satisfies L,
   copied: { en: 'Copied', vi: 'Đã chép' } satisfies L,
   emailSubject: {
     en: 'Fullstack Developer role',

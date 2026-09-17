@@ -96,7 +96,9 @@ it, which is the entire point of the material. If you dim one, dim the other.
 
 ### The accent budget — hard rule
 `--accent` is the product logo's mint, and appears in **at most four** places on the page:
-1. The primary CTA (Contact).
+1. The CTA, at both ends of the page: the hero's "Get in touch", which only points at the
+   Contact section, and Contact's "Send email", which actually opens the mail client. One
+   action, so one colour — a page whose final step is a grey button has no final step.
 2. The "now" dot on the experience timeline.
 3. Focus rings (`:focus-visible`).
 4. The success state of a copy button.

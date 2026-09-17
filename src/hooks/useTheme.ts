@@ -50,16 +50,20 @@ function prefersReducedMotion(): boolean {
  * Fading every one of those properties separately is not the fix — it would be
  * dozens of transitions, several of them on non-animatable values, and it still
  * would not look like anything. The platform has the right primitive: take the
- * old frame, paint the new one over it, and wipe it across. That is one
- * animation on one `clip-path`, it runs on the compositor, and it changes the
- * whole scene rather than decorating the button that triggered it.
+ * old frame, paint the new one over it, and bring it in as a soft bloom. It
+ * changes the whole scene rather than decorating the button that triggered it.
  *
- * The wipe's duration is `--d-theme`, and so is the toggle knob's travel, so
+ * `origin` is where that bloom starts — the rect of the control that was
+ * pressed, written out as viewport percentages for the mask in base.css. It is
+ * optional because the theme can also change without a click, and the mask
+ * falls back to the top centre.
+ *
+ * The bloom's duration is `--d-theme`, and so is the toggle knob's travel, so
  * the control and the page move as one gesture (base.css, Nav.css).
  *
  * Non-Chromium engines and `prefers-reduced-motion` get the plain swap.
  */
-export function useTheme(): { theme: Theme; toggle: () => void } {
+export function useTheme(): { theme: Theme; toggle: (origin?: DOMRect) => void } {
   const [theme, setTheme] = usePersistentState<Theme>('vinh-cv:theme', systemTheme(), isTheme);
 
   useEffect(() => {
@@ -68,7 +72,7 @@ export function useTheme(): { theme: Theme; toggle: () => void } {
   }, [theme]);
 
   const toggle = useCallback(
-    () => {
+    (origin?: DOMRect) => {
       const next: Theme = theme === 'dark' ? 'light' : 'dark';
       const doc = document as DocumentWithVT;
 
@@ -78,8 +82,21 @@ export function useTheme(): { theme: Theme; toggle: () => void } {
       }
 
       const root = document.documentElement;
+
+      // Percentages, not pixels: the mask box is the viewport, so the same two
+      // numbers place the bloom correctly at any size, and nothing has to be
+      // recomputed if the window changes during the 560ms. A zero-width rect
+      // means the control is not laid out — keep the previous origin instead of
+      // writing a nonsense one.
+      if (origin && origin.width > 0 && window.innerWidth > 0 && window.innerHeight > 0) {
+        const x = ((origin.left + origin.width / 2) / window.innerWidth) * 100;
+        const y = ((origin.top + origin.height / 2) / window.innerHeight) * 100;
+        root.style.setProperty('--vt-x', `${x.toFixed(2)}%`);
+        root.style.setProperty('--vt-y', `${y.toFixed(2)}%`);
+      }
+
       // Scopes every ::view-transition rule in base.css to THIS transition, so
-      // adding a view transition anywhere else later cannot inherit the wipe.
+      // adding a view transition anywhere else later cannot inherit the bloom.
       root.dataset.vt = 'theme';
 
       try {
