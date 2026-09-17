@@ -65,12 +65,17 @@
   margin-top: var(--s-1);
 }
 
+/* --text-1, matching .ai__evidence-link, and for the same reason: this is the
+   link that makes the credential checkable rather than claimed. It also sits on
+   a pane whose backdrop moves with the aurora, where --text-2 measured 3.98:1
+   at one point in the cycle. A page that says "verify this" should not set the
+   verifying link in its faintest ink. */
 .cert__verify {
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
   margin-top: var(--s-4);
-  color: var(--text-2);
+  color: var(--text-1);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--text-3) 60%, transparent);
   text-underline-offset: var(--s-1);

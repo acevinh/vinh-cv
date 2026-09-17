@@ -111,7 +111,7 @@
   border-radius: var(--r-pill);
   font-size: var(--fs-small);
   font-weight: 500;
-  color: var(--text-2);
+  color: var(--nav-ink);
   white-space: nowrap;
   transition: color var(--d-micro) var(--ease);
 }
@@ -180,7 +180,9 @@
   border-radius: var(--r-pill);
   background: color-mix(in srgb, var(--text-1) 88%, transparent);
   color: var(--bg-void);
-  transition: transform var(--d-micro) var(--ease);
+  /* --d-theme, not --d-micro: this knob and the page wipe are one gesture, so
+     they share the one duration token. See base.css @keyframes theme-reveal. */
+  transition: transform var(--d-theme) var(--ease);
 }
 
 .toggle.is-light .toggle__knob {
@@ -192,7 +194,7 @@
   grid-area: 1 / 1;
   display: block;
   width: var(--s-3);
-  transition: opacity var(--d-micro) var(--ease);
+  transition: opacity var(--d-theme) var(--ease);
 }
 
 .toggle__icon--sun {
@@ -242,7 +244,7 @@
   font-size: var(--fs-mono);
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--text-3);
+  color: var(--nav-ink);
   transition: color var(--d-micro) var(--ease);
 }
 
@@ -251,7 +253,7 @@
 }
 
 .seg__btn:hover {
-  color: var(--text-2);
+  color: var(--text-1);
 }
 
 .seg__btn[aria-pressed='true']:hover {
@@ -267,7 +269,7 @@
   width: var(--s-6);
   height: var(--s-6);
   border-radius: var(--r-pill);
-  color: var(--text-2);
+  color: var(--nav-ink);
   transition:
     color var(--d-micro) var(--ease),
     background-color var(--d-micro) var(--ease);

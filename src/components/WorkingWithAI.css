@@ -111,11 +111,16 @@
   font-size: var(--fs-small);
 }
 
+/* --text-1, not --text-2. This section deliberately has no glass behind it, so
+   this link reads straight off the aurora — and at a blob peak the backdrop
+   lifts far enough that --text-2 measured 3.20:1 in light. It is also the one
+   link on the page that carries the evidence for the claim above it, so it
+   should be the most legible thing in the block, not the least. */
 .ai__evidence-link {
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  color: var(--text-2);
+  color: var(--text-1);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--text-3) 60%, transparent);
   text-underline-offset: var(--s-1);

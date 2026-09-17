@@ -167,23 +167,43 @@ p {
 .glass {
   position: relative;
   border-radius: var(--r-lg);
-  background: linear-gradient(
-    160deg,
-    var(--glass-fill-hi) 0%,
-    var(--glass-fill-lo) 42%,
-    var(--glass-fill-lo) 100%
-  );
-  backdrop-filter: blur(var(--glass-blur)) saturate(175%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+  /* Two layers, and the order is the whole point: a thin directional wash for
+     the sheen, over a flat scrim of the page colour. The scrim is what carries
+     contrast; the wash is only there to give the surface a light direction.
+     Previously the wash WAS the recipe, at four times this opacity, which is
+     what turned every pane grey over colour. */
+  background:
+    linear-gradient(
+      160deg,
+      var(--glass-fill-hi) 0%,
+      var(--glass-fill-lo) 42%,
+      var(--glass-fill-lo) 100%
+    ),
+    var(--glass-scrim);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   border: 1px solid var(--glass-hair);
   box-shadow:
     inset 0 1px 0 0 var(--glass-rim),
     inset 0 -1px 0 0 var(--glass-rim-lo),
+    /* the floor bounce: light that made it through the slab, pooling along the
+       inside of the bottom edge. This is what gives the pane thickness. */ inset 0 -14px 20px -18px
+      var(--glass-rim),
     var(--glass-shadow);
   transition:
     background-color var(--d-theme) var(--ease),
     border-color var(--d-theme) var(--ease),
     box-shadow var(--d-theme) var(--ease);
+}
+
+/* Every engine drops backdrop-filter when printing, so a pane defined only by
+   what it does to its backdrop disappears — taking its scrim with it and
+   leaving the wash floating over white. Panes are flat on paper. */
+@media print {
+  .glass {
+    background: none !important;
+    box-shadow: none !important;
+  }
 }
 
 /* Pointer-tracked specular highlight. --mx/--my are written by useSpecular,
@@ -313,6 +333,63 @@ p {
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+}
+
+/* ---- theme change: a reveal, not a flash ----------------------------- *
+   See useTheme.ts for why this exists rather than more transitions. The old
+   frame is held still underneath and the new one is wiped in by a circle
+   growing out of the toggle. One animated property, on the compositor.
+
+   `[data-vt='theme']` is set for the duration of the transition only, so these
+   rules can never leak onto some other view transition added later. */
+
+:root[data-vt='theme']::view-transition-old(root),
+:root[data-vt='theme']::view-transition-new(root) {
+  /* Kill the UA's default cross-fade — running it under the wipe turns the
+     boundary into a smear instead of an edge. */
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root[data-vt='theme']::view-transition-old(root) {
+  z-index: 0;
+}
+
+:root[data-vt='theme']::view-transition-new(root) {
+  z-index: 1;
+  animation: theme-reveal var(--d-theme) var(--ease) forwards;
+}
+
+/* A left-to-right wipe across the whole page, not a flourish on the control.
+   `inset()` animates on the compositor and needs no extra element: the new
+   theme is clipped to zero width at the left edge and opened to full width. */
+@keyframes theme-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The new layer is LIVE DOM, not a snapshot, so any colour transition still
+   running inside it plays on screen and fights the wipe. Freeze the ones that
+   exist for the theme swap; the toggle's own knob and icons are deliberately
+   left alone, since the control should still respond under the reveal. */
+:root[data-vt='theme'] body,
+:root[data-vt='theme'] .glass,
+:root[data-vt='theme'] .grain,
+:root[data-vt='theme'] .aurora,
+:root[data-vt='theme'] .aurora__blob,
+:root[data-vt='theme'] .aurora__veil {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-vt='theme']::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 /* ---- accessibility ---------------------------------------------------- */

@@ -25,24 +25,28 @@ Declare on `:root`. Dark is the default; light overrides under `:root[data-theme
 ```
 --bg-void        #05070E     page background, behind the aurora
 --bg-deep        #0A0E1A     section wash
---aurora-1       #1E3A8A     indigo      (blob A)
---aurora-2       #0E7490     teal        (blob B)
---aurora-3       #4C1D95     violet      (blob C)
---aurora-4       #0F766E     deep teal   (blob D, smallest)
+--aurora-1       #2A2C96     brand violet-blue   (blob A)
+--aurora-2       #0F7A80     mint-teal           (blob B)
+--aurora-3       #4A2FB0     brand violet        (blob C, the dominant)
+--aurora-4       #13806F     mint                (blob D, smallest)
 
---glass-fill-hi  rgba(255,255,255,0.10)
---glass-fill-lo  rgba(255,255,255,0.025)
---glass-rim      rgba(255,255,255,0.22)    specular top edge
---glass-rim-lo   rgba(255,255,255,0.05)    bottom inner edge
---glass-hair     rgba(255,255,255,0.10)    1px hairline border
+--glass-fill-hi  rgba(255,255,255,0.055)   light direction only, NOT the fill
+--glass-fill-lo  rgba(255,255,255,0.012)
+--glass-scrim    rgba(5,7,14,0.44)         the contrast lever — see §4
+--glass-rim      rgba(255,255,255,0.30)    specular top edge
+--glass-rim-lo   rgba(255,255,255,0.06)    bottom inner edge
+--glass-hair     rgba(255,255,255,0.12)    1px hairline border
+--glass-blur     10px                      frost; 28px erased the backdrop
+--glass-sat      1.9                       so a pane carries hue, not grey
 
 --text-1         #E9EBF2     headings, primary
---text-2         #98A1B6     body, secondary
+--text-2         #A8B0C2     body, secondary — also small copy ON glass
 --text-3         #99A0B2     captions, tertiary — see "the contrast bar" below
---accent         #30D158     THE accent (ColorOS green)
---accent-ink     #06210F     text on accent
+--nav-ink        #C9CFDD     nav controls ONLY — they read against the pill
+--accent         #71E8D8     THE accent — the product logo's own mint
+--accent-ink     #062320     text on accent (11.3:1)
 
---aurora-veil    0.40        page colour washed back over the blobs
+--aurora-veil    0.26        page colour washed back over the blobs
 ```
 
 ### The contrast bar is the composited backdrop, not the token background
@@ -69,16 +73,19 @@ layers are painted once at the top of such a capture, so the aurora silently und
 ```
 --bg-void        #EFF1F6
 --bg-deep        #F6F7FA
---aurora-*       same hues; blob opacity 0.38, veil 0.40
---glass-fill-hi  rgba(255,255,255,0.62)
---glass-fill-lo  rgba(255,255,255,0.28)
+--aurora-*       same hues; blob opacity 0.38, veil 0.26
+--glass-fill-hi  rgba(255,255,255,0.34)
+--glass-fill-lo  rgba(255,255,255,0.12)
+--glass-scrim    rgba(249,250,252,0.50)    same lever, opposite polarity
 --glass-rim      rgba(255,255,255,0.95)
---glass-hair     rgba(9,14,28,0.13)
+--glass-hair     rgba(9,14,28,0.14)
+--glass-sat      1.45
 --text-1         #0D1220
---text-2         #4A5468
---text-3         #494F5F
---accent         #19803F     white on it = 5.00:1; measured, not assumed
---accent-ink     #FFFFFF
+--text-2         #3A4356
+--text-3         #434957
+--nav-ink        #454E61
+--accent         #0F7A6E     the same mint, taken down until white clears AA
+--accent-ink     #FFFFFF     white on it = 5.2:1; measured, not assumed
 ```
 
 **Light mode is not "dark mode with the colours flipped".** The first pass ran the aurora at 0.18
@@ -88,7 +95,7 @@ enough strength to read, *and* the glass has to be thin enough to actually modul
 it, which is the entire point of the material. If you dim one, dim the other.
 
 ### The accent budget — hard rule
-`--accent` appears in **at most four** places on the page:
+`--accent` is the product logo's mint, and appears in **at most four** places on the page:
 1. The primary CTA (Contact).
 2. The "now" dot on the experience timeline.
 3. Focus rings (`:focus-visible`).
@@ -143,19 +150,47 @@ content max-width 1120px.
   position: relative;
   border-radius: var(--r-lg);
   background:
-    linear-gradient(160deg,
+    linear-gradient(160deg,                  /* light direction only */
       var(--glass-fill-hi) 0%,
       var(--glass-fill-lo) 42%,
-      var(--glass-fill-lo) 100%);
-  backdrop-filter: blur(28px) saturate(175%);
-  -webkit-backdrop-filter: blur(28px) saturate(175%);
+      var(--glass-fill-lo) 100%),
+    var(--glass-scrim);                      /* the contrast lever */
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   border: 1px solid var(--glass-hair);
   box-shadow:
-    inset 0 1px 0 0 var(--glass-rim),      /* specular top edge — do NOT omit */
+    inset 0 1px 0 0 var(--glass-rim),        /* specular top edge — do NOT omit */
     inset 0 -1px 0 0 var(--glass-rim-lo),
-    0 24px 60px -28px rgba(0,0,0,0.75);
+    inset 0 -14px 20px -18px var(--glass-rim), /* floor bounce — the thickness */
+    var(--glass-shadow);
 }
 ```
+
+### Why this is not the original recipe (rewritten 2026-09-17)
+
+The first version was `rgba(255,255,255,0.10)` over `blur(28px)`, and both halves were measurably
+wrong. Keep this reasoning — it is the difference between glass and a grey box:
+
+1. **28px of frost does not soften a backdrop, it erases it.** Everything behind every pane
+   collapsed to one flat wash, so the material had nothing left to modulate and the page read as
+   lifeless. `blur` is now **10px**. Note for anyone adding real refraction later: past roughly 10px
+   the frost destroys the displacement too, so this ceiling is not arbitrary.
+2. **A white fill can only push a backdrop toward white.** On a dark page that is the wrong
+   direction, so the recipe had *no lever for contrast at all* — measured, it sat at 1.88:1 whatever
+   you did to it. The only remaining lever was `--aurora-veil`, applied to the **whole page**, which
+   is why the aurora had to be dimmed everywhere just to keep text on panes legible. That is the
+   real reason the page looked washed out.
+3. `--glass-scrim` fixes it: a flat wash of the page colour, **per pane**, whose polarity follows
+   the *text* rather than the theme's mood — dark in dark, light in light. Each pane now buys its
+   own contrast, so the veil dropped 0.40 → 0.26 and the aurora is saturated everywhere a pane is
+   not.
+
+**Measured, software rasterisation, 8 panes:** the old `blur(28px)` recipe ran at 55fps; a real
+displacement-refraction material at `blur(4px)` runs at 59fps. Frost is the expensive part, not the
+optics. Full-page SVG refraction was evaluated and **deliberately not shipped** — on this page's
+soft, low-frequency aurora the bend is real but invisible (it needs hard edges behind it to read),
+and it costs ~150 lines of canvas-map JS plus a Safari UA probe on a page with two dependencies.
+The lab that proves this lives outside the repo; re-derive it before reversing the decision.
 
 Two required refinements:
 

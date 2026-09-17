@@ -10,9 +10,14 @@ import './Experience.css';
  *
  * A CV that says "I ship product-grade web apps" with nothing shippable on the
  * page is asking to be taken on faith. This is the one place the claim becomes
- * checkable in a click — so it is a real link, with the store's own public
- * rating next to it, and the wording says the work goes *into* the product
- * rather than claiming authorship of it.
+ * checkable in a click — so it is a real link, carrying the store's own public
+ * icon and rating. The label says *developer on*, which is what he is; the app
+ * shipped in 2020, years before he joined, so it never claims authorship.
+ *
+ * The icon is the store's published listing image and is the only raster on the
+ * page. It is decorative here — the product name sits next to it in text — so
+ * it is `alt=""`, and it is dropped in print, where the strip collapses to one
+ * running line (Experience.css @media print).
  */
 function ShippedInto({ product, lang }: { product: ShippedProduct; lang: Lang }): JSX.Element {
   return (
@@ -22,6 +27,10 @@ function ShippedInto({ product, lang }: { product: ShippedProduct; lang: Lang })
       target="_blank"
       rel="noopener noreferrer"
     >
+      <span className="shipped__mark" aria-hidden="true">
+        <img src="/omega-feed-icon.png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+      </span>
+
       <span className="shipped__label mono">{t(EXPERIENCE.productLabel, lang)}</span>
 
       <span className="shipped__name">{product.name}</span>

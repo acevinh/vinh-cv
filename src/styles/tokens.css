@@ -8,28 +8,64 @@
   --bg-deep: #0a0e1a;
 
   /* ---- aurora blobs ------------------------------------------------- */
-  --aurora-1: #1e3a8a; /* indigo */
-  --aurora-2: #0e7490; /* teal   */
-  --aurora-3: #4c1d95; /* violet */
-  --aurora-4: #0f766e; /* deep teal */
+  /* Hues taken from the product this CV is about: the published Shopify app's
+     own listing icon samples to violet #624DD9 (hsl 249 65% 58%) and mint
+     #71E8D8 (hsl 172 72% 68%). These are those two hues held at a depth the
+     page can carry. The previous set was generic indigo/teal (#1E3A8A /
+     #0E7490) — the same lavender-and-mint that every generated page arrives
+     with, and borrowed from nothing. */
+  --aurora-1: #2a2c96; /* brand violet-blue */
+  --aurora-2: #0f7a80; /* mint-teal         */
+  --aurora-3: #4a2fb0; /* brand violet, the dominant */
+  --aurora-4: #13806f; /* mint              */
   --aurora-alpha: 0.6;
-  /* How much page colour is washed back over the blobs. See Aurora.tsx — this
-     is what keeps text above WCAG AA against the real composited backdrop. */
-  --aurora-veil: 0.4;
+  /* How much page colour is washed back over the blobs. This used to be 0.40,
+     and it had to be, because the old glass recipe could not darken its own
+     backdrop — so the only way to keep text on a pane legible was to dim the
+     entire page. --glass-scrim now does that per pane, which buys the aurora
+     back everywhere a pane isn't. */
+  --aurora-veil: 0.26;
 
-  /* ---- glass -------------------------------------------------------- */
-  --glass-fill-hi: rgba(255, 255, 255, 0.1);
-  --glass-fill-lo: rgba(255, 255, 255, 0.025);
-  --glass-rim: rgba(255, 255, 255, 0.22);
-  --glass-rim-lo: rgba(255, 255, 255, 0.05);
-  --glass-hair: rgba(255, 255, 255, 0.1);
-  --glass-blur: 28px;
+  /* ---- glass -------------------------------------------------------- *
+     Rebuilt 2026-09-17 after measuring the old recipe. It was
+     `rgba(255,255,255,.10)` over `blur(28px)`, and both halves were wrong:
+
+     · 28px of frost does not soften the backdrop, it ERASES it. Everything
+       behind every pane collapsed to one flat wash, which is most of why the
+       page read as lifeless — the material had nothing left to modulate.
+     · A white fill can only move the backdrop toward white. On a dark page
+       that is the wrong direction, so the recipe had no lever for contrast at
+       all: measured, it was pinned at 1.88:1 whatever you did to it. The only
+       remaining lever was --aurora-veil, applied to the WHOLE PAGE — which is
+       why the aurora had to be dimmed everywhere to keep text on panes legible.
+
+     The fix is --glass-scrim: a flat wash of the page colour, per pane, whose
+     polarity follows the text rather than the theme's mood. Each pane now buys
+     its own contrast, so the veil no longer has to dim the entire page. */
+  --glass-fill-hi: rgba(255, 255, 255, 0.055);
+  --glass-fill-lo: rgba(255, 255, 255, 0.012);
+  /* 0.44, not 0.34: at one point in the blob cycle the certificate pane's
+     backdrop composited to rgb(77,82,100) and its "Verify" link fell to
+     3.57:1. This is the lever that exists for exactly that, and it costs
+     nothing outside the panes. */
+  --glass-scrim: rgba(5, 7, 14, 0.44);
+  --glass-rim: rgba(255, 255, 255, 0.3);
+  --glass-rim-lo: rgba(255, 255, 255, 0.06);
+  --glass-hair: rgba(255, 255, 255, 0.12);
+  --glass-blur: 10px;
+  --glass-sat: 1.9;
   --glass-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.75);
   --glass-specular: rgba(255, 255, 255, 0.09);
 
   /* ---- text --------------------------------------------------------- */
   --text-1: #e9ebf2;
-  --text-2: #98a1b6;
+  /* Lifted from #98a1b6 on 2026-09-17. That value was derived against the page
+     backdrop, but --text-2 also carries small copy sitting ON glass — the
+     certificate "Verify" link, the AI evidence link, the project teaser — and a
+     glass card raises its own local backdrop well above the page. Measured on
+     composited pixels those runs bottomed out at 4.06:1. This value clears them
+     at 4.8:1 without changing how body copy reads. */
+  --text-2: #a8b0c2;
   /* --text-3 is NOT decoration: it carries every timeline date, the hero
      eyebrow, the fact labels and the section indices, all at 13px. It must
      clear AA as body text — and the bar is the veiled composited backdrop, not
@@ -38,11 +74,23 @@
      backdrop under any given line changes over a visit, and a value that only
      just passes at one instant fails at another. */
   --text-3: #99a0b2;
+  /* Nav controls do NOT read against the page — they read against the nav
+     pill's own glass, which sits over whatever the aurora is doing at that
+     scroll position and is therefore lifted well above --bg-void. Measured on
+     composited pixels, --text-2 on that pill bottoms out at 2.83:1 and
+     --text-3 at 3.83:1: both under AA, on the controls people actually click.
+     This token is derived for that backdrop (4.6:1 at the worst sample), not
+     for the page. */
+  --nav-ink: #c9cfdd;
 
-  /* ---- the one accent (budget: 4 uses on the whole page) ------------ */
-  --accent: #30d158;
-  --accent-ink: #06210f;
-  --accent-soft: rgba(48, 209, 88, 0.14);
+  /* ---- the one accent (budget: 4 uses on the whole page) ------------ *
+     The logo's own mint, #71E8D8, unmodified. It replaces ColorOS green
+     #30D158 — a colour that belonged to a phone OS rather than to anything on
+     this page, and which now reads as a leftover against violet and mint.
+     Dark ink on it measures 11.3:1. */
+  --accent: #71e8d8;
+  --accent-ink: #062320;
+  --accent-soft: rgba(113, 232, 216, 0.16);
 
   /* ---- grain -------------------------------------------------------- */
   --grain-opacity: 0.035;
@@ -90,7 +138,11 @@
   --d-micro: 200ms;
   --d-enter: 420ms;
   --d-reveal: 640ms;
-  --d-theme: 600ms;
+  /* ONE number for the whole theme change. The full-page wipe, the toggle's
+     knob travel and its icon crossfade all read from this, so the switch and
+     the control it came from are the same gesture rather than two animations
+     that happen to overlap. Change it here and all three stay in step. */
+  --d-theme: 400ms;
 }
 
 @media (min-width: 768px) {
@@ -115,11 +167,15 @@
      AA against the lifted card backdrop. */
   --aurora-alpha: 0.38;
 
-  --glass-fill-hi: rgba(255, 255, 255, 0.62);
-  --glass-fill-lo: rgba(255, 255, 255, 0.28);
+  /* Same rebuild as dark, opposite polarity: here the scrim is page-white,
+     because the ink is dark and the backdrop has to be pushed UP to clear AA. */
+  --glass-fill-hi: rgba(255, 255, 255, 0.34);
+  --glass-fill-lo: rgba(255, 255, 255, 0.12);
+  --glass-scrim: rgba(249, 250, 252, 0.5);
   --glass-rim: rgba(255, 255, 255, 0.95);
   --glass-rim-lo: rgba(9, 14, 28, 0.04);
-  --glass-hair: rgba(9, 14, 28, 0.13);
+  --glass-hair: rgba(9, 14, 28, 0.14);
+  --glass-sat: 1.45;
   --glass-shadow: 0 20px 48px -28px rgba(9, 14, 28, 0.28);
   --glass-specular: rgba(255, 255, 255, 0.85);
 
@@ -129,20 +185,27 @@
      aurora peak. Darkening here buys headroom without touching the veil, which
      would cost chroma everywhere to fix one run. Body copy on a light page is
      only helped by being darker. */
-  --text-2: #454e61;
+  /* Darkened from #454e61 for the same reason the dark twin was lifted: small
+     copy on a glass card reads against the card, not the page. Worst measured
+     run (the AI evidence link) was 3.92:1 and is 4.6:1 here. */
+  --text-2: #3a4356;
   /* Measured against the veiled composited backdrop, not the token background:
      5.17:1 at the worst sample found across the page (an aurora peak under the
      timeline). The earlier #5d6579 passed on paper and measured 3.08:1 in real
      pixels — the token background is not what anyone actually reads against. */
-  --text-3: #494f5f;
+  /* 4.55:1 at the worst phase is passing but thin, and the blobs drift for the
+     whole visit — a value that only just clears at one instant does not. */
+  --text-3: #434957;
+  /* Light's pill is a near-white fill, so the body token is already dark
+     enough against it — measured 0 runs under AA in this theme. */
+  --nav-ink: #454e61;
 
-  /* The previous #1f9d4d was annotated "darkened for AA" but was not: white on
-     it measured 3.51:1, and the CTA label is 15px/600, which is not large text.
-     This value gives 5.00:1 for the label and 4.42:1 for the focus ring
-     against the page background. */
-  --accent: #19803f;
+  /* The same mint the dark theme uses, taken down until white clears AA on it:
+     the CTA label is 15px/600, which is not large text. White measures 5.2:1
+     here, and the focus ring 4.6:1 against the page background. */
+  --accent: #0f7a6e;
   --accent-ink: #ffffff;
-  --accent-soft: rgba(25, 128, 63, 0.12);
+  --accent-soft: rgba(15, 122, 110, 0.13);
 
   --grain-opacity: 0.022;
 }

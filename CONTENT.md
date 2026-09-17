@@ -75,7 +75,7 @@ phone number. Email is `work.vinh.vn@gmail.com` and is the only contact detail p
 
 EN bullets:
 - Ship features end to end across a NestJS 11 + TypeScript API and a React 18 + TypeScript frontend.
-- Work inside a product team — scoping, implementation, code review, release.
+- Refactor and extend code I did not write, on an app that has been live for merchants since 2020.
 - Build the frontend against a generated API client, so a backend contract change is coordinated
   across both repos in a single change instead of breaking the client silently.
 - Build embedded Shopify app surfaces with Polaris and the Admin GraphQL API.
@@ -83,7 +83,7 @@ EN bullets:
 
 VI bullets:
 - Triển khai tính năng đầu-cuối trên API NestJS 11 + TypeScript và frontend React 18 + TypeScript.
-- Làm việc trong team product — chốt phạm vi, code, review, release.
+- Refactor và mở rộng phần code không do mình viết, trên một app đã chạy thật cho merchant từ 2020.
 - Frontend build trên API client sinh tự động, nên mọi thay đổi hợp đồng API phía backend được
   đồng bộ hai repo trong cùng một thay đổi, thay vì làm hỏng client một cách âm thầm.
 - Xây giao diện Shopify embedded app bằng Polaris và Admin GraphQL API.
@@ -91,8 +91,10 @@ VI bullets:
 
 #### Live product on the current role
 
-Rendered as a link strip inside node 1. **Phrased as work *into* the product, never as authorship** —
-the app shipped in 2020, years before he joined in May 2025.
+Rendered as a link strip inside node 1. **He is a fullstack developer ON this app — never its
+author.** The app shipped in 2020, years before he joined; he has worked on it continuously since
+his July 2025 internship, which is the fact worth stating. "Developer on" is accurate and is what
+he asked for (2026-09-17); "created", "built" or "launched" are not.
 
 | Field | Value |
 | --- | --- |
@@ -102,8 +104,9 @@ the app shipped in 2020, years before he joined in May 2025.
 | Reviews | 110 |
 | Live since | Nov 2020 |
 
-- EN blurb: *A published Shopify app, live since 2020 — this is the product my day-to-day work ships into.*
-- VI blurb: *Ứng dụng Shopify đã phát hành, chạy thật từ 2020 — đây là sản phẩm mà công việc hằng ngày của tôi đi vào.*
+- EN label: *Fullstack developer on* · VI label: *Lập trình viên fullstack của*
+- EN blurb: *A published Shopify app, live since 2020. I've worked on it since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.*
+- VI blurb: *Ứng dụng Shopify đã phát hành, chạy thật từ 2020. Tôi làm trên chính sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.*
 
 ⚠️ **Two things to re-check before this CV goes anywhere.** The rating and review count are public
 figures that drift, so verify them against the listing. And the store lists the publisher as

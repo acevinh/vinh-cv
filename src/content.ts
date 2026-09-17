@@ -122,11 +122,11 @@ export const ABOUT = {
   heading: { en: 'About', vi: 'Giới thiệu' } satisfies L,
   paragraphs: {
     en: [
-      "I'm a fullstack developer in Hanoi. I started as a PHP/Laravel backend apprentice in May 2025 and moved into a product team, where I now work across a NestJS API and a React TypeScript frontend.",
+      "I'm a fullstack developer in Hanoi. I started as a PHP/Laravel backend apprentice in May 2025 and moved into a product team, where I now work across a NestJS API and a React TypeScript frontend — on the same published Shopify app I joined as an intern.",
       'What I care about is the unglamorous half of shipping: knowing what a change breaks before you make it, and being able to prove it works afterwards. That is also why I put real effort into working with AI agents — I write the guardrails first, then let them move fast inside those.',
     ],
     vi: [
-      'Tôi là lập trình viên fullstack tại Hà Nội. Tôi bắt đầu với vị trí học việc backend PHP/Laravel từ tháng 5/2025, rồi chuyển vào team product, hiện làm cả API NestJS lẫn frontend React TypeScript.',
+      'Tôi là lập trình viên fullstack tại Hà Nội. Tôi bắt đầu với vị trí học việc backend PHP/Laravel từ tháng 5/2025, rồi chuyển vào team product, hiện làm cả API NestJS lẫn frontend React TypeScript — trên chính ứng dụng Shopify đã phát hành mà tôi vào làm từ kỳ thực tập.',
       'Thứ tôi quan tâm là nửa không hào nhoáng của việc ship: biết một thay đổi sẽ làm hỏng cái gì trước khi làm, và chứng minh được nó chạy đúng sau khi làm. Đó cũng là lý do tôi đầu tư nghiêm túc vào cách làm việc với AI agent — viết rào chắn trước, rồi mới để chúng chạy nhanh bên trong rào đó.',
     ],
   } satisfies LL,
@@ -162,7 +162,10 @@ export const EXPERIENCE = {
   heading: { en: 'Experience', vi: 'Kinh nghiệm' } satisfies L,
   educationHeading: { en: 'Education', vi: 'Học vấn' } satisfies L,
   /** Labels for the live-product strip on the current role. */
-  productLabel: { en: 'Shipping into', vi: 'Đang làm cho sản phẩm' } satisfies L,
+  productLabel: {
+    en: 'Fullstack developer on',
+    vi: 'Lập trình viên fullstack của',
+  } satisfies L,
   productReviews: { en: 'reviews', vi: 'đánh giá' } satisfies L,
   productView: { en: 'View on the Shopify App Store', vi: 'Xem trên Shopify App Store' } satisfies L,
   education: {
@@ -184,14 +187,14 @@ export const TIMELINE: TimelineNode[] = [
     bullets: {
       en: [
         'Ship features end to end across a NestJS 11 + TypeScript API and a React 18 + TypeScript frontend.',
-        'Work inside a product team — scoping, implementation, code review, release.',
+        'Refactor and extend code I did not write, on an app that has been live for merchants since 2020.',
         'Build the frontend against a generated API client, so a backend contract change is coordinated across both repos in a single change instead of breaking the client silently.',
         'Build embedded Shopify app surfaces with Polaris and the Admin GraphQL API.',
         'Run AI agents against a written process I maintain — the same rules published in claude-skills.',
       ],
       vi: [
         'Triển khai tính năng đầu-cuối trên API NestJS 11 + TypeScript và frontend React 18 + TypeScript.',
-        'Làm việc trong team product — chốt phạm vi, code, review, release.',
+        'Refactor và mở rộng phần code không do mình viết, trên một app đã chạy thật cho merchant từ 2020.',
         'Frontend build trên API client sinh tự động, nên mọi thay đổi hợp đồng API phía backend được đồng bộ hai repo trong cùng một thay đổi, thay vì làm hỏng client một cách âm thầm.',
         'Xây giao diện Shopify embedded app bằng Polaris và Admin GraphQL API.',
         'Vận hành AI agent theo bộ quy trình do tôi tự viết và duy trì — chính là bộ đã public ở claude-skills.',
@@ -203,8 +206,8 @@ export const TIMELINE: TimelineNode[] = [
       rating: '4.9',
       reviews: '110',
       blurb: {
-        en: 'A published Shopify app, live since 2020 — this is the product my day-to-day work ships into.',
-        vi: 'Ứng dụng Shopify đã phát hành, chạy thật từ 2020 — đây là sản phẩm mà công việc hằng ngày của tôi đi vào.',
+        en: "A published Shopify app, live since 2020. I've worked on it since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.",
+        vi: 'Ứng dụng Shopify đã phát hành, chạy thật từ 2020. Tôi làm trên chính sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.',
       },
     },
   },
