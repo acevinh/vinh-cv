@@ -162,9 +162,27 @@
     border-block-end: 1px solid var(--glass-hair);
   }
 
+  /* Flex rather than block, so the portrait can sit BESIDE the four masthead
+     lines instead of above them. Beside costs no vertical millimetres, which
+     matters: the printed CV is exactly two pages and the masthead is at the top
+     of page 1. */
   .hero__inner {
-    display: block;
+    display: flex;
+    align-items: flex-start;
+    column-gap: 4mm;
     margin-block: 0;
+  }
+
+  /* `display: none` on screen below 1100px, but paper has no breakpoints. */
+  .hero__portrait {
+    display: block !important;
+    flex: none;
+    width: 20mm;
+  }
+
+  .hero__portrait img {
+    border-radius: 0;
+    box-shadow: none;
   }
 
   /* The 01…07 section numbers are a website affectation. On screen they give the
@@ -181,6 +199,10 @@
     align-items: baseline;
     column-gap: 1.6mm;
     grid-column: auto;
+    /* min-width:0 — without it the flex item refuses to shrink below its
+       content and the portrait gets pushed off the right edge of the page. */
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .hero__name {

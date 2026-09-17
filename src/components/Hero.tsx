@@ -82,6 +82,25 @@ export default function Hero({ lang }: HeroProps): JSX.Element {
             </a>
           </div>
         </div>
+
+        {/* The right third has been held open for this since the first layout
+            (DESIGN.md §7.1). `loading="lazy"` is deliberate rather than lazy
+            thinking: the figure is display:none below 1100px, and a lazy image
+            inside a hidden box is never fetched — so phones do not pay 36KB for
+            something they will not see. */}
+        <figure className="hero__portrait hero__enter" style={enter(2)}>
+          <picture>
+            <source type="image/webp" srcSet="/portrait.webp" />
+            <img
+              src="/portrait.jpg"
+              alt={IDENTITY.fullName}
+              width={800}
+              height={1141}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </figure>
       </div>
 
       <div className="container hero__foot">

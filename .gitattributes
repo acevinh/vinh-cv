@@ -1,0 +1,10 @@
+# GitHub picks a repo's language by counting BYTES, and here the two are all but
+# tied: 87,766 bytes of CSS against 84,867 of TypeScript, a 3.4% margin. So the
+# "CSS" label on the repo card is the outcome of a coin flip rather than a
+# description of the project, and it is the first thing anyone reads about it.
+#
+# What this line actually does: CSS leaves the language bar entirely, and the
+# repo reads as TypeScript. That is a presentation choice, not a claim — the CSS
+# is still there, still hand-written, and still the point of the page. Delete
+# this line and the bar comes back exactly as it was.
+*.css linguist-detectable=false

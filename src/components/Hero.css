@@ -40,6 +40,41 @@
   }
 }
 
+/* ---- the portrait ------------------------------------------------------ *
+   Only from 1100px, which is exactly where .hero__text gives up its last two
+   columns — so this occupies space the layout was already reserving rather
+   than taking any from the type. Below that the hero stays as it has been.
+
+   It is a real <img>, not a background: a face is content, it belongs in the
+   accessibility tree, and it has to survive onto the printed CV. */
+
+.hero__portrait {
+  display: none;
+  margin: 0;
+}
+
+@media (min-width: 1100px) {
+  .hero__portrait {
+    display: block;
+    grid-column: 9 / span 4;
+    grid-row: 1;
+    align-self: center;
+  }
+}
+
+.hero__portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-lg);
+  /* Same rim and floor shadow every other surface on this page carries, so the
+     photograph reads as one more pane rather than as a pasted-in rectangle.
+     The studio backdrop is #185C84, which happens to sit a few degrees off
+     --aurora-2 (#0F7A80) — it belongs in this palette by luck, not by work. */
+  border: 1px solid var(--glass-hair);
+  box-shadow: var(--glass-shadow);
+}
+
 /* ---- the text block ---------------------------------------------------- */
 
 .hero__eyebrow {
