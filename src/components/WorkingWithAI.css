@@ -1,0 +1,171 @@
+/* Working with AI — the differentiator section (DESIGN.md §7.6).
+   Laid out as a statement, not a feature grid: a lede column that stops short of
+   the right edge, then four rules as full-width rules-of-the-house separated by
+   hairlines, each opened by a large mono numeral. No cards, no boxes, no icons —
+   the only ornament is the number. */
+
+/* One track by default; the 12-column field only exists where it is used.
+   A 12-track grid charges for 11 column gaps even when every child spans the
+   full width — 11 × var(--s-6) = 352px, wider than the 312px content box on a
+   360px phone. The tracks collapse to 0, the gaps do not, and the section
+   overflows silently because `body { overflow-x: hidden }` hides the scrollbar. */
+.ai__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .ai__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--s-6);
+  }
+
+  .ai__statement {
+    grid-column: 1 / span 8;
+  }
+
+  /* Indented from the lede so the rules read as a consequence of it. */
+  .ai__rules,
+  .ai__evidence {
+    grid-column: 3 / -1;
+  }
+}
+
+/* ---- statement ---------------------------------------------------------- */
+
+.ai__lead {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  text-wrap: balance;
+}
+
+/* Balanced wrapping is a screen nicety: it evens out a two-line lede under a
+   heading. On A4 the column is narrower and balancing produced a hard break
+   mid-clause that reads as a typo in the printed CV. */
+@media print {
+  .ai__lead {
+    text-wrap: auto;
+  }
+}
+
+.ai__para {
+  margin-top: var(--s-5);
+}
+
+/* ---- the four rules ----------------------------------------------------- */
+
+.ai__rules {
+  list-style: none;
+  margin: var(--s-8) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--glass-hair);
+}
+
+.ai__rule {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-4);
+  padding-block: var(--s-5);
+  border-bottom: 1px solid var(--glass-hair);
+}
+
+@media (min-width: 640px) {
+  .ai__rule {
+    gap: var(--s-6);
+    padding-block: var(--s-6);
+  }
+}
+
+/* .mono sets --fs-mono; these numerals are the section's one piece of scale. */
+.ai__rule .ai__num {
+  font-size: var(--fs-h2);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai__rule-text {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+/* ---- evidence ----------------------------------------------------------- */
+
+.ai__evidence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-4);
+  max-width: none;
+  margin-top: var(--s-5);
+  font-size: var(--fs-small);
+}
+
+.ai__evidence-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  color: var(--text-2);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--text-3) 60%, transparent);
+  text-underline-offset: var(--s-1);
+  transition:
+    color var(--d-micro) var(--ease),
+    text-decoration-color var(--d-micro) var(--ease);
+}
+
+.ai__evidence-link:hover {
+  color: var(--text-1);
+  text-decoration-color: currentColor;
+}
+
+.ai__icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* ---- print -------------------------------------------------------------- */
+
+@media print {
+  .ai__para {
+    margin-top: 1.2mm;
+  }
+
+  .ai__rules {
+    margin-block-start: 1.6mm;
+    border-top: 1px solid var(--glass-hair);
+  }
+
+  .ai__rule {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    gap: 0 3mm;
+    padding-block: 1mm;
+    border-bottom: 1px solid var(--glass-hair);
+  }
+
+  .ai__rule .ai__num {
+    font-size: var(--fs-body);
+  }
+
+  .ai__rule-text,
+  .ai__lead {
+    font-size: var(--fs-body);
+    max-width: none;
+  }
+
+  .ai__evidence {
+    margin-top: 1.4mm;
+  }
+}

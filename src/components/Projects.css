@@ -1,0 +1,265 @@
+/* Projects — two case-study cards that expand in place (DESIGN.md §7.5).
+   Deliberately unequal: the first card is 7 of 12 columns and hangs on the left
+   edge, the second is 9 of 12 and is indented, so the pair reads as a staircase
+   rather than as a two-up card row (DESIGN.md §0.3). */
+
+.projects__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--s-7) var(--s-6);
+}
+
+.projects__slot:nth-child(1) {
+  grid-column: 1 / span 7;
+}
+
+.projects__slot:nth-child(2) {
+  grid-column: 4 / span 9;
+}
+
+/* Collapse to ONE column, not to twelve full-width columns.
+   Spanning `1 / -1` across a 12-track grid still pays for 11 column gaps:
+   11 × var(--s-6) = 352px of gutter alone, which is wider than the 312px
+   content box at a 360px viewport. The tracks dutifully collapse to 0 and the
+   gaps do not, so the row overflowed by 40px — and `body { overflow-x: hidden }`
+   swallowed the scrollbar, leaving the card silently clipped with no way to
+   reach it. One track has no inner gaps, so there is nothing left to overflow. */
+@media (max-width: 900px) {
+  .projects__list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-7);
+  }
+
+  .projects__slot:nth-child(1),
+  .projects__slot:nth-child(2) {
+    grid-column: 1;
+  }
+}
+
+/* ---- the card ---------------------------------------------------------- */
+
+.project {
+  display: block;
+  padding: var(--s-6);
+  /* Tilt: --tilt-x / --tilt-y are written by useTilt inside a rAF. Max 6°. */
+  transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition:
+    transform var(--d-enter) var(--ease),
+    background-color var(--d-theme) var(--ease),
+    border-color var(--d-theme) var(--ease),
+    box-shadow var(--d-theme) var(--ease);
+}
+
+/* While the pointer is on the card the rAF already gives us 60fps — a
+   transition here would only add lag. On leave it comes back. */
+.project:hover {
+  transition:
+    background-color var(--d-theme) var(--ease),
+    border-color var(--d-theme) var(--ease),
+    box-shadow var(--d-theme) var(--ease);
+}
+
+@media (min-width: 768px) {
+  .project {
+    padding: var(--s-7);
+  }
+}
+
+.project__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.project__name {
+  font-size: var(--fs-h3);
+}
+
+.project__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  color: var(--text-3);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: var(--s-1);
+  transition:
+    color var(--d-micro) var(--ease),
+    text-decoration-color var(--d-micro) var(--ease);
+}
+
+.project__link:hover {
+  color: var(--text-1);
+  text-decoration-color: currentColor;
+}
+
+.project__icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* ---- tags -------------------------------------------------------------- */
+
+.project__tags {
+  list-style: none;
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+/* ---- teaser: collapses away as the case study opens -------------------- */
+
+.project__teaser {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--d-enter) var(--ease);
+}
+
+.project[data-open='true'] .project__teaser {
+  grid-template-rows: 0fr;
+}
+
+.project__teaser-text {
+  min-height: 0;
+  overflow: hidden;
+  margin-top: var(--s-5);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  opacity: 1;
+  transition: opacity var(--d-micro) var(--ease);
+}
+
+.project[data-open='true'] .project__teaser-text {
+  opacity: 0;
+}
+
+/* ---- toggle ------------------------------------------------------------ */
+
+.project__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+  padding: 0;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--text-1);
+  transition: opacity var(--d-micro) var(--ease);
+}
+
+.project__toggle:hover {
+  opacity: 0.7;
+}
+
+.project__chevron {
+  transform: rotate(0deg);
+  transition: transform var(--d-micro) var(--ease);
+}
+
+.project[data-open='true'] .project__chevron {
+  transform: rotate(180deg);
+}
+
+/* ---- the case study: 0fr -> 1fr, the one height technique that is smooth */
+
+.project__expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--d-enter) var(--ease);
+}
+
+.project[data-open='true'] .project__expand {
+  grid-template-rows: 1fr;
+}
+
+.project__body {
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(calc(var(--s-2) * -1));
+  transition:
+    opacity var(--d-enter) var(--ease),
+    transform var(--d-enter) var(--ease);
+}
+
+.project[data-open='true'] .project__body {
+  opacity: 1;
+  transform: none;
+}
+
+.project__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-2);
+  padding-top: var(--s-5);
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--glass-hair);
+}
+
+.project__label {
+  text-transform: uppercase;
+}
+
+.project__text {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+@media (min-width: 768px) {
+  .project__row {
+    grid-template-columns: 8ch minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: baseline;
+  }
+}
+
+/* ---- print: one flat, fully expanded case study ------------------------ */
+
+@media print {
+  .projects__list {
+    display: block;
+  }
+
+  .projects__slot + .projects__slot {
+    margin-top: 2.4mm;
+  }
+
+  .project {
+    transform: none !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .project__tags {
+    margin-top: 0.8mm;
+  }
+
+  .project__row {
+    gap: 0 4mm;
+    padding-top: 1.2mm;
+    margin-top: 1.2mm;
+  }
+
+  /* The teaser only exists to preview the Problem row — on paper the row itself
+     is always printed, so the preview would be a duplicate paragraph. */
+  .project__teaser,
+  .project__toggle {
+    display: none !important;
+  }
+
+  .project__body {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,79 @@
+/* About — section 01. Prose capped at the measure, flush left, never centred.
+   The facts are hairline rows rather than cards: the glass material is spent on
+   Skills and Projects, so this section stays quiet by contrast (DESIGN.md §0.3). */
+
+.about__prose {
+  color: var(--text-2);
+}
+
+.about__paragraph + .about__paragraph {
+  margin-block-start: var(--s-4);
+}
+
+/* The first paragraph carries the weight; the second is the aside. */
+.about__paragraph:first-child {
+  color: var(--text-1);
+}
+
+/* ---- facts ----------------------------------------------------------- */
+
+.facts {
+  display: grid;
+  gap: var(--s-5);
+  margin-block-start: var(--s-7);
+}
+
+@media (min-width: 720px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-7);
+    row-gap: var(--s-6);
+    /* Indented off the prose's left edge so the block reads as an annotation
+       rather than a second column of body copy. */
+    margin-inline-start: var(--s-8);
+  }
+}
+
+.facts__item {
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--glass-hair);
+}
+
+.facts__label {
+  display: block;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.facts__value {
+  margin-block-start: var(--s-2);
+  max-width: 36ch;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--text-1);
+}
+
+@media print {
+  .about__paragraph + .about__paragraph {
+    margin-block-start: 1.4mm;
+  }
+
+  /* The screen grid only kicks in at 720px and the A4 page is wider than that,
+     so the two columns survive — they are what keeps the facts to two rows. */
+  .facts {
+    margin-block-start: 2.4mm;
+    margin-inline-start: 0;
+    gap: 1.6mm 8mm;
+  }
+
+  .facts__item {
+    border-block-start: 1px solid var(--glass-hair);
+    padding-block-start: 0.8mm;
+  }
+
+  .facts__value {
+    max-width: none;
+    margin-block-start: 0.4mm;
+  }
+}

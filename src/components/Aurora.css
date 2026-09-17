@@ -1,0 +1,163 @@
+/* The aurora engine — DESIGN.md §5.
+   Animate ONLY transform. Never filter, opacity, width, top or background-position.
+   `will-change: transform` lives here and nowhere else on the page. */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+}
+
+/* No `filter: blur()`.
+   It used to carry blur(90px), which cost nothing on a GPU but forced the layer
+   to be re-rasterised every frame under software rendering: a measured 134 ms
+   mean frame, worst 277 ms, ~7 fps. Disabling just this filter took the same
+   page back to a locked 60 fps, while backdrop-filter and the grain measured
+   free. So anyone without hardware acceleration — older Android, a Chromebook,
+   a VM, a remote desktop, a GPU blocklist — was paying for an effect the
+   gradient can produce on its own.
+   The softness now comes from multi-stop radial gradients instead. Visually
+   near-identical, and pure compositing: transform is all that changes. */
+.aurora__blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: var(--aurora-alpha);
+  will-change: transform;
+  /* Only ever fires on a theme swap — never part of the idle animation. */
+  transition: opacity var(--d-theme) var(--ease);
+}
+
+/* ---- A · indigo, top-left, the anchor of the composition --------------- */
+.aurora__blob--a {
+  width: 62vmax;
+  height: 62vmax;
+  top: -20vmax;
+  left: -14vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--aurora-1) 92%, transparent) 0%,
+    color-mix(in srgb, var(--aurora-1) 66%, transparent) 20%,
+    color-mix(in srgb, var(--aurora-1) 38%, transparent) 38%,
+    color-mix(in srgb, var(--aurora-1) 16%, transparent) 54%,
+    color-mix(in srgb, var(--aurora-1) 5%, transparent) 68%,
+    transparent 82%
+  );
+  animation: aurora-a 56s ease-in-out -11s infinite alternate;
+}
+
+/* ---- B · teal, upper right, the cool counterweight --------------------- */
+.aurora__blob--b {
+  width: 54vmax;
+  height: 54vmax;
+  top: 4vmax;
+  right: -18vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--aurora-2) 92%, transparent) 0%,
+    color-mix(in srgb, var(--aurora-2) 66%, transparent) 20%,
+    color-mix(in srgb, var(--aurora-2) 38%, transparent) 38%,
+    color-mix(in srgb, var(--aurora-2) 16%, transparent) 54%,
+    color-mix(in srgb, var(--aurora-2) 5%, transparent) 68%,
+    transparent 82%
+  );
+  animation: aurora-b 68s ease-in-out -27s infinite alternate;
+}
+
+/* ---- C · violet, low and wide, carries the lower third ----------------- */
+.aurora__blob--c {
+  width: 70vmax;
+  height: 70vmax;
+  bottom: -30vmax;
+  left: 8vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--aurora-3) 92%, transparent) 0%,
+    color-mix(in srgb, var(--aurora-3) 66%, transparent) 20%,
+    color-mix(in srgb, var(--aurora-3) 38%, transparent) 38%,
+    color-mix(in srgb, var(--aurora-3) 16%, transparent) 54%,
+    color-mix(in srgb, var(--aurora-3) 5%, transparent) 68%,
+    transparent 82%
+  );
+  animation: aurora-c 44s ease-in-out -5s infinite alternate;
+}
+
+/* ---- D · deep teal, the smallest, keeps the right edge alive ----------- */
+.aurora__blob--d {
+  width: 45vmax;
+  height: 45vmax;
+  bottom: 2vmax;
+  right: 2vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--aurora-4) 92%, transparent) 0%,
+    color-mix(in srgb, var(--aurora-4) 66%, transparent) 20%,
+    color-mix(in srgb, var(--aurora-4) 38%, transparent) 38%,
+    color-mix(in srgb, var(--aurora-4) 16%, transparent) 54%,
+    color-mix(in srgb, var(--aurora-4) 5%, transparent) 68%,
+    transparent 82%
+  );
+  animation: aurora-d 72s ease-in-out -38s infinite alternate;
+}
+
+@keyframes aurora-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(9vmax, 7vmax, 0) scale(1.18);
+  }
+}
+
+@keyframes aurora-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(-11vmax, 12vmax, 0) scale(0.9);
+  }
+}
+
+@keyframes aurora-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.94);
+  }
+  to {
+    transform: translate3d(13vmax, -8vmax, 0) scale(1.14);
+  }
+}
+
+@keyframes aurora-d {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.12);
+  }
+  to {
+    transform: translate3d(-14vmax, -10vmax, 0) scale(0.86);
+  }
+}
+
+/* ---- the contrast veil ------------------------------------------------- *
+   Sits above the blobs, below everything else, and washes the page colour back
+   over the layer. It is what lets the aurora stay strong enough to read as a
+   design idea in light mode without dragging text under WCAG AA — see the
+   comment in Aurora.tsx for the measurements. Static: it never animates, so it
+   composites once and costs nothing. */
+.aurora__veil {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-void);
+  opacity: var(--aurora-veil);
+  transition:
+    background-color var(--d-theme) var(--ease),
+    opacity var(--d-theme) var(--ease);
+}
+
+/* Freeze, never hide: the page must still look designed when it stops moving. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora__blob {
+    animation: none;
+    will-change: auto;
+  }
+}

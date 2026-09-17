@@ -1,0 +1,296 @@
+/* The floating glass pill — DESIGN.md §7 (nav), §8 (controls).
+   Desktop: near the top. Mobile: near the bottom, in thumb reach.
+   Every value below is a token or a calc() over tokens. */
+
+.nav {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  width: min(100% - var(--s-5) * 2, var(--content-max));
+  /* The bar itself must not eat pointer events across the whole strip. */
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .nav {
+    top: var(--s-5);
+    bottom: auto;
+  }
+}
+
+/* Two classes so this beats `.glass`'s own border-radius, which loads later. */
+.nav__pill.glass {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 100%;
+  padding: var(--s-2);
+  border-radius: var(--r-pill);
+  pointer-events: auto;
+}
+
+/* ---- section links + the sliding indicator ----------------------------- */
+
+.nav__links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+
+.nav__links::-webkit-scrollbar {
+  display: none;
+}
+
+/* The scrollbar is hidden, so without this the row just ends at a hard edge and
+   there is nothing to tell a phone reader that four more sections exist to the
+   right. Fading both ends is the affordance; Nav.tsx keeps the active link
+   centred so the row also stays a position display rather than a dead end.
+   The fade is symmetric because the list scrolls in both directions — masking
+   only the right edge would lie once the reader reaches the end. */
+@media (max-width: 767px) {
+  .nav__links {
+    --nav-fade: var(--s-5);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--nav-fade),
+      #000 calc(100% - var(--nav-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--nav-fade),
+      #000 calc(100% - var(--nav-fade)),
+      transparent 100%
+    );
+    scroll-behavior: smooth;
+  }
+}
+
+/* Rendered first so every link paints on top of it. */
+.nav__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--ind-w, 0);
+  height: 100%;
+  border: 1px solid var(--glass-hair);
+  border-radius: var(--r-pill);
+  background: var(--glass-fill-hi);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(var(--ind-x, 0));
+  transition:
+    transform var(--d-micro) var(--ease),
+    width var(--d-micro) var(--ease),
+    opacity var(--d-micro) var(--ease);
+}
+
+.nav__indicator.is-on {
+  opacity: 1;
+}
+
+.nav__link {
+  position: relative;
+  display: block;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+  transition: color var(--d-micro) var(--ease);
+}
+
+.nav__link:hover,
+.nav__link.is-active {
+  color: var(--text-1);
+}
+
+.nav__divider {
+  flex: none;
+  align-self: stretch;
+  width: 1px;
+  margin-inline: var(--s-1);
+  background: var(--glass-hair);
+}
+
+/* ---- controls ---------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* iOS-style theme toggle: a real button, a knob that slides on transform. */
+.toggle {
+  --track-w: calc(var(--s-5) * 2);
+  --track-h: var(--s-5);
+  --knob-pad: calc(var(--s-1) / 2);
+  --knob-size: calc(var(--s-5) - var(--s-1));
+  --knob-travel: var(--s-5);
+
+  display: inline-flex;
+  flex: none;
+  padding: var(--s-1);
+  border-radius: var(--r-pill);
+}
+
+.toggle__track {
+  position: relative;
+  display: block;
+  width: var(--track-w);
+  height: var(--track-h);
+  border: 1px solid var(--glass-hair);
+  border-radius: var(--r-pill);
+  background: var(--glass-fill-lo);
+  transition:
+    background-color var(--d-micro) var(--ease),
+    border-color var(--d-micro) var(--ease);
+}
+
+.toggle:hover .toggle__track {
+  border-color: var(--glass-rim);
+}
+
+.toggle__knob {
+  position: absolute;
+  top: var(--knob-pad);
+  left: var(--knob-pad);
+  display: grid;
+  place-items: center;
+  width: var(--knob-size);
+  height: var(--knob-size);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--text-1) 88%, transparent);
+  color: var(--bg-void);
+  transition: transform var(--d-micro) var(--ease);
+}
+
+.toggle.is-light .toggle__knob {
+  transform: translateX(var(--knob-travel));
+}
+
+/* Both icons are stacked in the knob and crossfaded — no layout, no swap. */
+.toggle__icon {
+  grid-area: 1 / 1;
+  display: block;
+  width: var(--s-3);
+  transition: opacity var(--d-micro) var(--ease);
+}
+
+.toggle__icon--sun {
+  opacity: 0;
+}
+
+.toggle.is-light .toggle__icon--moon {
+  opacity: 0;
+}
+
+.toggle.is-light .toggle__icon--sun {
+  opacity: 1;
+}
+
+/* EN / VI segmented switch. */
+.seg {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: calc(var(--s-1) / 2);
+  border: 1px solid var(--glass-hair);
+  border-radius: var(--r-pill);
+  background: var(--glass-fill-lo);
+}
+
+.seg__thumb {
+  position: absolute;
+  top: calc(var(--s-1) / 2);
+  bottom: calc(var(--s-1) / 2);
+  left: calc(var(--s-1) / 2);
+  width: calc(50% - var(--s-1) / 2);
+  border-radius: var(--r-pill);
+  background: var(--glass-fill-hi);
+  transition: transform var(--d-micro) var(--ease);
+}
+
+.seg.is-second .seg__thumb {
+  transform: translateX(100%);
+}
+
+.seg__btn {
+  position: relative;
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-3);
+  transition: color var(--d-micro) var(--ease);
+}
+
+.seg__btn[aria-pressed='true'] {
+  color: var(--text-1);
+}
+
+.seg__btn:hover {
+  color: var(--text-2);
+}
+
+.seg__btn[aria-pressed='true']:hover {
+  color: var(--text-1);
+}
+
+/* Icon-only control (print). */
+.ctrl-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--s-6);
+  height: var(--s-6);
+  border-radius: var(--r-pill);
+  color: var(--text-2);
+  transition:
+    color var(--d-micro) var(--ease),
+    background-color var(--d-micro) var(--ease);
+}
+
+.ctrl-btn svg {
+  width: var(--s-5);
+}
+
+.ctrl-btn:hover {
+  color: var(--text-1);
+  background: var(--glass-fill-lo);
+}
+
+/* ---- the 380px collapse: links go, controls stay ----------------------- */
+
+@media (max-width: 380px) {
+  .nav__links,
+  .nav__divider {
+    display: none;
+  }
+
+  .nav__pill.glass {
+    padding-inline: var(--s-3);
+  }
+}

@@ -1,0 +1,143 @@
+/* Certifications — verifiable credentials (DESIGN.md §7.7).
+   Three cards in one row, widths 5 / 4 / 3 of 12. Never three equal cards
+   (DESIGN.md §0.3): the widest carries the longest title, the narrowest is the
+   one credential with no public verification page, so the row also encodes how
+   much there is to say about each. */
+
+.certs__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: stretch;
+  gap: var(--s-4);
+}
+
+.certs__list > :nth-child(1) {
+  grid-column: span 12;
+}
+
+.certs__list > :nth-child(2) {
+  grid-column: span 12;
+}
+
+.certs__list > :nth-child(3) {
+  grid-column: span 12;
+}
+
+@media (min-width: 860px) {
+  .certs__list > :nth-child(1) {
+    grid-column: span 5;
+  }
+
+  .certs__list > :nth-child(2) {
+    grid-column: span 4;
+  }
+
+  .certs__list > :nth-child(3) {
+    grid-column: span 3;
+  }
+}
+
+/* ---- one credential ----------------------------------------------------- */
+
+.cert {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-1);
+  padding: var(--s-5);
+  border-radius: var(--r-md);
+}
+
+.cert__name {
+  font-size: var(--fs-body);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.cert__issuer {
+  font-size: var(--fs-small);
+}
+
+.cert__date {
+  margin-top: var(--s-1);
+}
+
+.cert__verify {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-top: var(--s-4);
+  color: var(--text-2);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--text-3) 60%, transparent);
+  text-underline-offset: var(--s-1);
+  transition:
+    color var(--d-micro) var(--ease),
+    text-decoration-color var(--d-micro) var(--ease);
+}
+
+.cert__verify:hover {
+  color: var(--text-1);
+  text-decoration-color: currentColor;
+}
+
+.cert__icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* Pushes the note off the cards without a spacer element. */
+.certs__note {
+  margin-top: var(--s-5);
+  font-size: var(--fs-small);
+}
+
+/* ---- print -------------------------------------------------------------- */
+
+@media print {
+  .certs__list {
+    display: block;
+  }
+
+  /* Flat on paper: print.css strips the glass border and radius, and the card
+     has to stop being a box so the injected verification URL wraps inside the
+     text flow instead of running past a rounded edge. */
+  .cert {
+    display: block;
+    padding: 0 !important;
+    margin-bottom: 1mm;
+    overflow-wrap: anywhere;
+  }
+
+  .cert__name,
+  .cert__issuer,
+  .cert__date,
+  .cert__verify {
+    display: inline;
+    margin: 0;
+    font-size: var(--fs-small);
+  }
+
+  .cert__name {
+    font-weight: 700;
+  }
+
+  .cert__verify {
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .cert__issuer::before,
+  .cert__date::before,
+  .cert__verify::before {
+    content: ' · ';
+  }
+
+  .certs__note {
+    margin-top: 1mm;
+  }
+}

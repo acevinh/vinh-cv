@@ -1,0 +1,113 @@
+/* Skills — section 03.
+
+   DESIGN.md §0.3 forbids equal cards in a row, and the four groups carry
+   deliberately uneven counts (9 / 7 / 6 / 5). The grid mirrors that: on a
+   12-column field the rows run 7|5 then 5|7, and the right-hand card of each
+   row drops by --s-7 so the block staggers like masonry instead of tiling.
+
+       ┌───────────────7───────────────┐┌──────5──────┐   ← offset down
+       ┌──────5──────┐┌───────────────7───────────────┐   ← offset down
+
+   The widest slot goes to the longest list, so the chips fill their card
+   rather than leaving one box half empty. */
+
+.skills__grid {
+  display: grid;
+  gap: var(--s-5);
+  align-items: start;
+}
+
+.skills__group {
+  padding: var(--s-5);
+}
+
+.skills__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-block-end: var(--s-4);
+  padding-block-end: var(--s-3);
+  border-block-end: 1px solid var(--glass-hair);
+}
+
+.skills__label {
+  color: var(--text-1);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.skills__count {
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.skills__items {
+  list-style: none;
+  padding-inline-start: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+/* ---- the asymmetric field ---------------------------------------------- */
+
+@media (min-width: 900px) {
+  .skills__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--s-5);
+    row-gap: var(--s-6);
+  }
+
+  .skills__group:nth-child(1) {
+    grid-area: 1 / 1 / 2 / 8;
+  }
+
+  .skills__group:nth-child(2) {
+    grid-area: 1 / 8 / 2 / 13;
+    margin-block-start: var(--s-7);
+  }
+
+  .skills__group:nth-child(3) {
+    grid-area: 2 / 1 / 3 / 6;
+  }
+
+  .skills__group:nth-child(4) {
+    grid-area: 2 / 6 / 3 / 13;
+    margin-block-start: var(--s-7);
+  }
+}
+
+/* ---- print: chips collapse to a dotted run (see print.css) -------------- */
+
+@media print {
+  .skills__grid {
+    display: block;
+  }
+
+  .skills__group {
+    padding: 0;
+    margin-block-end: 1.4mm;
+    border: none !important;
+  }
+
+  .skills__group:nth-child(n) {
+    grid-area: auto;
+    margin-block-start: 0;
+  }
+
+  .skills__head {
+    margin-block-end: 0.5mm;
+    padding-block-end: 0;
+    border-block-end: none;
+    justify-content: flex-start;
+  }
+
+  .skills__count {
+    display: none;
+  }
+
+  .skills__items {
+    display: block;
+  }
+}

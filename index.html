@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Vinh Van — Fullstack Developer</title>
+    <meta
+      name="description"
+      content="Fullstack developer in Hanoi. NestJS, React and TypeScript on a product team, with a written process for working alongside AI agents."
+    />
+    <link rel="canonical" href="https://vinhvan.netlify.app/" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="Vinh Van — Fullstack Developer" />
+    <meta
+      property="og:description"
+      content="NestJS, React and TypeScript on a product team, with a written process for working alongside AI agents."
+    />
+    <meta property="og:url" content="https://vinhvan.netlify.app/" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- DESIGN.md §10: no web font blocks first paint. A plain stylesheet link
+         sits in the critical path and delays FCP on every visit. Fetching it at
+         print priority and promoting it to `all` once it has loaded keeps it
+         off that path; `display=swap` means text is painted in the fallback
+         face meanwhile rather than held back. The <noscript> copy keeps the
+         fonts for readers without scripting. -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+      />
+    </noscript>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Without JavaScript the React tree never mounts, so the essentials are
+         served as static markup. This is the CV in plain text: enough for a
+         reader with scripting off, a text-mode browser, or a crawler that does
+         not execute JS. Link-preview bots already read the meta tags above. -->
+    <noscript>
+      <style>
+        #root { display: none; }
+        .ns { max-width: 40rem; margin: 3rem auto; padding: 0 1.5rem;
+              font: 400 1rem/1.6 system-ui, sans-serif; color: #e9ebf2; }
+        .ns h1 { font-size: 2rem; margin: 0 0 .25rem; }
+        .ns h2 { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+                 color: #98a1b6; margin: 2rem 0 .5rem; }
+        .ns a { color: #e9ebf2; }
+        .ns li { margin-bottom: .35rem; }
+        body { background: #05070e; }
+      </style>
+      <div class="ns">
+        <h1>Vinh Van</h1>
+        <p>Fullstack Developer — Hanoi, Vietnam. NestJS, React and TypeScript on a product team.</p>
+
+        <h2>Experience</h2>
+        <ul>
+          <li>
+            2026.01 — Present · Fullstack Developer · XIPAT — shipping into
+            <a href="https://apps.shopify.com/google-shopping-feed-pro">Omega Google &amp; Facebook Feed</a>,
+            a published Shopify app rated 4.9 across 110 reviews
+          </li>
+          <li>2025.11 — 2025.12 · Probation · XIPAT</li>
+          <li>2025.07 — 2025.10 · Backend Intern · XIPAT</li>
+          <li>2025.05 — 2025.06 · Apprentice · XIPAT</li>
+        </ul>
+
+        <h2>Education</h2>
+        <p>FPT Polytechnic — Backend Development (PHP / Laravel)</p>
+
+        <h2>Skills</h2>
+        <p>
+          NestJS · TypeScript · Node.js · PHP · Laravel · TypeORM · React 18 ·
+          Redux Toolkit · Vite · MySQL · MongoDB · PostgreSQL + pgvector · Redis · Docker
+        </p>
+
+        <h2>Projects</h2>
+        <ul>
+          <li><a href="https://github.com/acevinh/visic">visic</a> — RAG chatbot with grounded answers and citations.</li>
+          <li><a href="https://github.com/acevinh/claude-skills">claude-skills</a> — process rules for AI coding agents.</li>
+        </ul>
+
+        <h2>Certifications</h2>
+        <ul>
+          <li><a href="https://verify.skilljar.com/c/quhis252443d">Claude Code in Action</a> — Anthropic Education, Apr 2026</li>
+          <li><a href="https://verify.skilljar.com/c/ytamcsc3sxu6">Introduction to Agent Skills</a> — Anthropic Education, Apr 2026</li>
+          <li>Developing Apps for Shopify — Shopify Academy, Apr 2026</li>
+        </ul>
+
+        <h2>Contact</h2>
+        <p>
+          <a href="mailto:work.vinh.vn@gmail.com">work.vinh.vn@gmail.com</a> ·
+          <a href="https://github.com/acevinh">github.com/acevinh</a>
+        </p>
+      </div>
+    </noscript>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

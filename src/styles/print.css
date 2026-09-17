@@ -1,0 +1,335 @@
+/* Print / Save-as-PDF stylesheet (DESIGN.md §9).
+   This is the "Résumé (PDF)" feature — there is no PDF library. The button calls
+   window.print() and this file turns the site into a clean two-page A4 CV.
+   Judge it by actually printing to PDF and reading the result. */
+
+@page {
+  size: A4;
+  margin: 11mm 13mm 13mm;
+}
+
+@media print {
+  /* ---- the print token ramp ------------------------------------------ *
+     Paper has one theme. Everything downstream reads --text-1/2/3 and the
+     glass hairlines from tokens.css, and those resolve against whatever
+     data-theme the screen happened to be in — on a dark screen the whole CV
+     would print near-white. So the tokens themselves are redefined here, for
+     all three :root states, and this file is the last stylesheet in the
+     bundle so an equal-specificity redefinition wins.
+
+     These greys are the one place a literal colour belongs: this IS the
+     definition of the ramp. Nothing prints lighter than --text-3 (#3e434a).  */
+  :root,
+  :root[data-theme='dark'],
+  :root[data-theme='light'] {
+    --text-1: #0d1117; /* headings, name, job titles, fact values */
+    --text-2: #2a2f36; /* body copy, bullets */
+    --text-3: #3e434a; /* dates, labels, captions — still solid at 8pt */
+
+    /* No colour on paper: the accent budget (DESIGN.md §1) is a screen idea. */
+    --accent: #0d1117;
+    --accent-ink: #ffffff;
+    --accent-soft: transparent;
+
+    /* Glass has no analogue in ink. Hairlines survive as real borders — they
+       are the only structure left once the fills and shadows are gone.
+       Backgrounds are not printed at all, so these must be border colours. */
+    --glass-hair: #b9bec6;
+    --glass-rim: transparent;
+    --glass-rim-lo: transparent;
+    --glass-fill-hi: transparent;
+    --glass-fill-lo: transparent;
+    --glass-specular: transparent;
+    --glass-shadow: none;
+
+    --bg-void: #ffffff;
+    --bg-deep: #ffffff;
+    --grain-opacity: 0;
+
+    /* ---- the paper type scale ----------------------------------------
+       The screen scale is fluid (clamp + vw) and resolves against the A4
+       page width, which lands far too large. Fixed points instead, so the
+       whole CV is sized from one place. */
+    --fs-display: 20pt;
+    --fs-h2: 10.5pt;
+    --fs-h3: 10.2pt;
+    --fs-body: 10pt;
+    --fs-small: 8.9pt;
+    --fs-mono: 8.3pt;
+
+    /* Measure is a screen comfort; on A4 the column is already narrow. */
+    --measure: none;
+
+    --gutter: 0;
+    --section-gap: 4mm;
+  }
+
+  /* ---- kill everything decorative, interactive, or dead on paper ------- */
+  .aurora,
+  .grain,
+  .nav,
+  .controls,
+  .hero__scroll,
+  .hero__foot,
+  .hero__actions,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Link affordance icons. `svg { display: block }` (base.css) makes every one
+     of these break its own line once the link is laid out inline for print —
+     that is what dragged the cert card's ↗ onto a line of its own. The URL is
+     printed after the link text anyway, so the glyph has no job here. */
+  .cert__icon,
+  .contact__icon,
+  .project__icon,
+  .ai__icon,
+  .education__icon {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: var(--text-1);
+    font-size: var(--fs-body);
+    line-height: 1.34;
+  }
+
+  /* Flatten the glass: no blur, no shadow, no fill, no rounded rectangle.
+     A printed border around a certification reads as a form field, not a card. */
+  .glass,
+  .glass--interactive,
+  .chip,
+  .btn {
+    background: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .glass--interactive::after {
+    display: none !important;
+  }
+
+  /* Reveal animations must never leave content invisible on paper. */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Case studies print expanded regardless of the on-screen toggle state. */
+  .project__body,
+  [data-print-expand] {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* ---- running identification ----------------------------------------- *
+     A position:fixed box repeats on every printed page in Chrome, which is
+     the only running header/footer available without a PDF library. It sits
+     at the foot, not the head, so it cannot collide with the masthead on
+     page 1. The strings mirror IDENTITY in content.ts — like the <noscript>
+     CV in index.html (DESIGN.md §11), keep them in step by hand. */
+  body::after {
+    content: 'Vinh Van · work.vinh.vn@gmail.com';
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    padding-block-start: 1.2mm;
+    border-block-start: 1px solid var(--glass-hair);
+    font-family: var(--font-mono);
+    font-size: 7pt;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    color: var(--text-3);
+  }
+
+  /* ---- the masthead ---------------------------------------------------- *
+     On screen the hero is a full viewport with the text block optically
+     centred. On paper that is a blank cover page. It collapses to four flush
+     lines at the top of page 1: name, identity + role, contact, positioning. */
+  .hero {
+    min-height: 0;
+    padding-block: 0 2.5mm;
+    margin-block-end: 1mm;
+    border-block-end: 1px solid var(--glass-hair);
+  }
+
+  .hero__inner {
+    display: block;
+    margin-block: 0;
+  }
+
+  /* The 01…07 section numbers are a website affectation. On screen they give the
+     page a running index; on a CV they read as a form to be filled in. */
+  .section__index {
+    display: none !important;
+  }
+
+  /* Flex, so `order` can lift the name above the eyebrow and the two mono
+     lines can share a row without a wrapper element in the markup. */
+  .hero__text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 1.6mm;
+    grid-column: auto;
+  }
+
+  .hero__name {
+    order: 1;
+    flex: 0 0 100%;
+    margin-top: 0;
+    font-size: var(--fs-display);
+    line-height: 1.05;
+  }
+
+  .hero__legal {
+    order: 2;
+    margin-top: 1mm;
+  }
+
+  .hero__eyebrow {
+    order: 3;
+    display: block;
+    margin-top: 1mm;
+  }
+
+  /* The screen hairline becomes the separator between the two mono strings. */
+  .hero__eyebrow::before {
+    content: '·';
+    width: auto;
+    height: auto;
+    background: none;
+    margin-inline-end: 1.6mm;
+  }
+
+  .hero__text::after {
+    order: 4;
+    flex: 0 0 100%;
+    content: 'work.vinh.vn@gmail.com · github.com/acevinh';
+    margin-top: 0.8mm;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.02em;
+    color: var(--text-2);
+  }
+
+  .hero__lede {
+    order: 5;
+    flex: 0 0 100%;
+    margin-top: 1.4mm;
+    max-width: none;
+  }
+
+  /* ---- layout ---------------------------------------------------------- */
+  .container {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  .section {
+    padding-block: var(--section-gap) 0;
+    break-inside: auto;
+  }
+
+  .section__head {
+    gap: var(--s-2);
+    margin-bottom: 1.6mm;
+  }
+
+  /* The rule is a 1px background box, and backgrounds are not printed. */
+  .section__rule {
+    height: 0;
+    align-self: center;
+    background: none !important;
+    border-block-start: 1px solid var(--glass-hair);
+  }
+
+  h1 {
+    font-size: var(--fs-display);
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: var(--fs-h2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: var(--fs-h3);
+  }
+
+  p,
+  li {
+    max-width: none;
+  }
+
+  /* Chips become a plain comma-free inline run so skills fit two lines.
+     The separator needs its own margins: a chip is an inline-flex box, so a
+     space at the start of its ::before content collapses away and the dot
+     ends up welded to the previous skill ("NestJS· TypeScript"). */
+  .chip {
+    padding: 0 !important;
+    gap: 0.42em;
+    font-size: var(--fs-mono);
+  }
+
+  .chip + .chip::before {
+    content: '·';
+    margin-inline-start: 0.42em;
+    color: var(--text-3);
+  }
+
+  /* ---- never split these across pages -------------------------------- */
+  .timeline__node,
+  .project,
+  .cert,
+  .facts__item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* `break-after: avoid` on the h2 itself is ignored: the h2 is a flex item of
+     .section__head, and fragmentation properties do not apply to flex items.
+     That is why "05 WORKING WITH AI" orphaned at the foot of a page. The
+     avoidance has to sit on the block container, and be met halfway by the
+     block that follows it. */
+  .section__head {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .section__head + * {
+    break-before: avoid;
+    page-break-before: avoid;
+  }
+
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* ---- print the URL behind every outbound link ----------------------- */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 7.4pt;
+    color: var(--text-3);
+    word-break: break-all;
+  }
+
+  /* …but not for links whose text already is the URL, or icon-only links. */
+  a[href^='http'].no-print-url::after {
+    content: '';
+  }
+}

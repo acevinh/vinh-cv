@@ -1,0 +1,31 @@
+[build]
+  # pnpm, not npm: the repo ships a pnpm lockfile, and `allowBuilds` in
+  # pnpm-workspace.yaml (which is what lets esbuild run its postinstall) is a
+  # pnpm 11 setting. package.json pins `packageManager` so the build image
+  # resolves the same version via corepack instead of whatever it defaults to.
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+
+# Hashed filenames, so these can never go stale.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The document itself must not be cached hard, or a deploy leaves people on the
+# old page pointing at asset URLs that no longer exist.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

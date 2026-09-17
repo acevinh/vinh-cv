@@ -1,0 +1,409 @@
+/* Experience — section 02. A single rail runs the height of the timeline; the
+   node marked `current` carries the only --accent on the page (DESIGN.md §1,
+   accent budget item 2) and is the only thing here that moves. */
+
+.timeline,
+.education {
+  /* Rail geometry, all derived from the space scale so nothing is hard-coded.
+     --tl-center is the one knob: both the dot and the connector read from it. */
+  --tl-period: calc(var(--s-10) + var(--s-2)); /* fits "2026.01 — Present" in mono */
+  --tl-rail: var(--s-6);
+  --tl-dot: var(--s-3);
+  --tl-dot-top: var(--s-1);
+  --tl-center: calc(var(--tl-dot) / 2);
+  /* DESIGN.md §7.3 fixes the breathing cycle at 3s and the token set has no
+     duration that slow — this is the one literal duration in the section. */
+  --tl-breathe: 3000ms;
+}
+
+.timeline {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.timeline__node {
+  position: relative;
+  padding-inline-start: var(--s-6);
+  padding-block-end: var(--s-7);
+}
+
+.timeline__node:last-child {
+  padding-block-end: 0;
+}
+
+/* The connector: from just under this node's dot to the top of the next one.
+   Consecutive nodes touch, so the segments read as one continuous line. */
+.timeline__node::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--tl-dot-top) + var(--tl-dot) + var(--s-1)) 0;
+  inset-inline-start: var(--tl-center);
+  width: 1px;
+  background: var(--glass-hair);
+}
+
+.timeline__node:last-child::before {
+  display: none;
+}
+
+/* ---- dots ------------------------------------------------------------- */
+
+.timeline__dot {
+  position: absolute;
+  inset-block-start: var(--tl-dot-top);
+  inset-inline-start: calc(var(--tl-center) - var(--tl-dot) / 2);
+  width: var(--tl-dot);
+  height: var(--tl-dot);
+  border-radius: var(--r-pill);
+  background: var(--text-3);
+  /* Opaque ring punches the connector out from behind the dot. */
+  box-shadow: 0 0 0 var(--s-1) var(--bg-void);
+}
+
+.timeline__node.is-current .timeline__dot {
+  background: var(--accent);
+}
+
+/* The breath. transform + opacity only — no box-shadow spread, no filter. */
+.timeline__node.is-current .timeline__dot::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--s-1) * -2);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  animation: timeline-breathe var(--tl-breathe) var(--ease) infinite;
+}
+
+@keyframes timeline-breathe {
+  0%,
+  100% {
+    transform: scale(0.5);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.1;
+  }
+}
+
+/* ---- node content ------------------------------------------------------ */
+
+.timeline__period {
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.timeline__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-3);
+  margin-block-start: var(--s-1);
+}
+
+.timeline__role {
+  color: var(--text-1);
+}
+
+.timeline__org {
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.timeline__bullets {
+  list-style: none;
+  padding-inline-start: 0;
+  margin-block-start: var(--s-3);
+  display: grid;
+  gap: var(--s-2);
+}
+
+.timeline__bullets li {
+  position: relative;
+  padding-inline-start: var(--s-4);
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* A hairline en-dash marker instead of a bullet glyph — quieter, and it lines
+   up with the rail's own hairline. */
+.timeline__bullets li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.72em;
+  width: var(--s-2);
+  height: 1px;
+  background: var(--text-3);
+}
+
+/* ---- desktop: two-column rail ------------------------------------------ */
+
+@media (min-width: 860px) {
+  .timeline,
+  .education {
+    --tl-dot-top: var(--s-2);
+    --tl-center: calc(var(--tl-period) + var(--tl-rail) / 2);
+  }
+
+  .timeline__node {
+    display: grid;
+    grid-template-columns: var(--tl-period) var(--tl-rail) minmax(0, 1fr);
+    align-items: start;
+    padding-inline-start: 0;
+  }
+
+  .timeline__period {
+    grid-column: 1;
+  }
+
+  .timeline__body {
+    grid-column: 3;
+  }
+
+  .timeline__title {
+    margin-block-start: 0;
+  }
+}
+
+/* ---- education: one quiet line ----------------------------------------- */
+
+.education {
+  display: grid;
+  gap: var(--s-2);
+  margin-block-start: var(--s-7);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid var(--glass-hair);
+}
+
+.education__label {
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.education__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.education__icon {
+  flex: none;
+  width: var(--s-5);
+  height: var(--s-5);
+  color: var(--text-3);
+}
+
+.education__school {
+  color: var(--text-1);
+}
+
+@media (min-width: 860px) {
+  .education {
+    grid-template-columns: calc(var(--tl-period) + var(--tl-rail)) minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* ---- the live product behind the current role -------------------------- *
+   The one place on the page where "I ship product-grade web apps" stops being
+   a claim and becomes a link. It sits at the end of the current node's bullets,
+   deliberately as a whole-block anchor rather than a card with a link inside:
+   the entire strip is the target. */
+
+.shipped {
+  display: grid;
+  grid-template-areas:
+    'label  meta'
+    'name   name'
+    'blurb  blurb';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-1) var(--s-4);
+  margin-top: var(--s-5);
+  padding: var(--s-4) var(--s-5);
+  border-radius: var(--r-md);
+}
+
+.shipped__label {
+  grid-area: label;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.shipped__name {
+  grid-area: name;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+
+.shipped__meta {
+  grid-area: meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* The star is the only filled glyph on the page; keep it the text colour so it
+   cannot be mistaken for a second accent (DESIGN.md §1, the accent budget). */
+.shipped__star {
+  width: 13px;
+  height: 13px;
+  color: var(--text-2);
+}
+
+.shipped__sep {
+  color: var(--text-3);
+}
+
+.shipped__blurb {
+  grid-area: blurb;
+  margin-top: var(--s-2);
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+@media (max-width: 460px) {
+  /* The rating cannot share a row with the label at this width without one of
+     them wrapping mid-token. */
+  .shipped {
+    grid-template-areas:
+      'label'
+      'name'
+      'meta'
+      'blurb';
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .shipped__meta {
+    margin-top: var(--s-1);
+  }
+}
+
+/* ---- print: the rail is decoration, the dates are not ------------------ */
+
+@media print {
+  .timeline__dot,
+  .timeline__node::before {
+    display: none !important;
+  }
+
+  /* The date column has to hold the longest period string — "2026.01 — Present",
+     17 mono glyphs — at the print --fs-mono, and .timeline__period is nowrap.
+     28mm was narrower than that string, so every date ran straight under its
+     job title. 33mm of text plus a real 4mm gutter leaves visible slack. */
+  .timeline__node {
+    display: grid;
+    grid-template-columns: 33mm minmax(0, 1fr);
+    column-gap: 4mm;
+    padding: 0 0 2.4mm;
+  }
+
+  .timeline__period {
+    grid-column: 1;
+  }
+
+  .timeline__body {
+    grid-column: 2;
+  }
+
+  .timeline__title {
+    gap: 0 var(--s-2);
+    margin-block-start: 0;
+  }
+
+  .timeline__bullets {
+    margin-block-start: 0.8mm;
+    gap: 0.3mm;
+  }
+
+  .timeline__bullets li {
+    padding-inline-start: 3mm;
+  }
+
+  /* The screen marker is a 1px-tall background box, and backgrounds are not
+     printed — the bullets came out as loose unindented lines. A real glyph
+     survives ink. */
+  .timeline__bullets li::before {
+    content: '•';
+    inset-block-start: 0;
+    width: auto;
+    height: auto;
+    background: none;
+    color: var(--text-3);
+    line-height: inherit;
+  }
+
+  .education {
+    grid-template-columns: 33mm minmax(0, 1fr);
+    gap: 0 4mm;
+    margin-block-start: 2.5mm;
+    padding-block-start: 1.6mm;
+    border-block-start: 1px solid var(--glass-hair);
+  }
+
+  /* On paper the strip becomes one running line so print.css can append the
+     store URL after it — a recruiter reading the PDF can still type it in.
+     The blurb explains the link on screen and is redundant next to the URL. */
+  .shipped {
+    display: block;
+    margin-block-start: 1.2mm;
+    padding: 0;
+    font-size: var(--fs-small);
+  }
+
+  .shipped__label::after {
+    content: ' ';
+  }
+
+  .shipped__name {
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+
+  .shipped__meta {
+    display: inline;
+  }
+
+  .shipped__meta::before {
+    content: ' — ';
+  }
+
+  .shipped__star,
+  .shipped__blurb {
+    display: none !important;
+  }
+
+  /* `.shipped` is also a `.glass--interactive`, and that class's ::after is the
+     pointer-specular highlight — an absolutely-positioned, zero-opacity box.
+     `a[href]::after`, the rule that prints a link's URL, is the SAME pseudo
+     element, so the store address was being laid out invisibly on top of the
+     link and never reached paper.
+     Un-hiding `display` alone was not enough: `position: absolute` and
+     `opacity: 0` still leaked from the specular rule. Every property that rule
+     sets has to be unwound, not just the one that looked guilty. */
+  a.shipped::after {
+    display: inline !important;
+    position: static !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    background: none !important;
+    border-radius: 0 !important;
+    font-family: var(--font-mono);
+    word-break: break-all;
+  }
+}

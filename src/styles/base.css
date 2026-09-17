@@ -1,0 +1,368 @@
+/* Midnight Aurora — reset, shared primitives, glass recipe, grain.
+   Components style themselves in their own CSS file; anything reused by two or
+   more components belongs here. See DESIGN.md §4 and §6. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  color: var(--text-1);
+  background: var(--bg-void);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition:
+    background-color var(--d-theme) var(--ease),
+    color var(--d-theme) var(--ease);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* The skip link focuses the main landmark programmatically. Chrome matches
+   :focus-visible on programmatic focus that follows a keypress, so the rule
+   above would paint a ring around the entire page. A landmark is not an
+   interactive control and should never look focused. */
+main:focus,
+main:focus-visible {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-1);
+}
+
+/* ---- typography primitives ------------------------------------------ */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+p {
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-variant-ligatures: none;
+}
+
+.muted {
+  color: var(--text-2);
+}
+
+.dim {
+  color: var(--text-3);
+}
+
+/* ---- layout ---------------------------------------------------------- */
+
+.shell {
+  position: relative;
+  z-index: 2;
+}
+
+/* On phones the nav pill is fixed to the bottom for thumb reach, so the page
+   needs clearance or the footer sits underneath it. Desktop puts the pill at
+   the top, where normal flow already handles it. */
+@media (max-width: 767px) {
+  .shell {
+    padding-bottom: calc(var(--s-9) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-gap);
+  scroll-margin-top: 96px;
+}
+
+.section__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  margin-bottom: var(--s-7);
+}
+
+.section__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  color: var(--text-3);
+}
+
+.section__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--glass-hair);
+}
+
+/* ---- the glass recipe (DESIGN.md §4) --------------------------------- */
+
+.glass {
+  position: relative;
+  border-radius: var(--r-lg);
+  background: linear-gradient(
+    160deg,
+    var(--glass-fill-hi) 0%,
+    var(--glass-fill-lo) 42%,
+    var(--glass-fill-lo) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+  border: 1px solid var(--glass-hair);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-rim),
+    inset 0 -1px 0 0 var(--glass-rim-lo),
+    var(--glass-shadow);
+  transition:
+    background-color var(--d-theme) var(--ease),
+    border-color var(--d-theme) var(--ease),
+    box-shadow var(--d-theme) var(--ease);
+}
+
+/* Pointer-tracked specular highlight. --mx/--my are written by useSpecular,
+   inside a rAF, as custom properties only — never as inline geometry. */
+.glass--interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    var(--glass-specular),
+    transparent 42%
+  );
+  opacity: 0;
+  transition: opacity var(--d-micro) var(--ease);
+}
+
+.glass--interactive:hover::after,
+.glass--interactive:focus-within::after {
+  opacity: 1;
+}
+
+/* ---- grain: the detail that stops this looking generated -------------- */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+  transition: opacity var(--d-theme) var(--ease);
+}
+
+/* ---- chips and pills -------------------------------------------------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-hair);
+  background: var(--glass-fill-lo);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+  transition:
+    color var(--d-micro) var(--ease),
+    border-color var(--d-micro) var(--ease),
+    transform var(--d-micro) var(--ease);
+}
+
+.chip:hover {
+  color: var(--text-1);
+  border-color: var(--glass-rim);
+  transform: translateY(-1px);
+}
+
+/* ---- buttons ---------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 13px 22px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  transition:
+    transform var(--d-micro) var(--ease),
+    background-color var(--d-micro) var(--ease),
+    border-color var(--d-micro) var(--ease),
+    box-shadow var(--d-micro) var(--ease);
+}
+
+.btn:active {
+  transform: scale(0.975);
+}
+
+.btn--accent {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.btn--accent:hover {
+  box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--accent) 80%, transparent);
+  transform: translateY(-1px);
+}
+
+.btn--glass {
+  border: 1px solid var(--glass-hair);
+  background: var(--glass-fill-lo);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-1);
+}
+
+.btn--glass:hover {
+  border-color: var(--glass-rim);
+  background: var(--glass-fill-hi);
+  transform: translateY(-1px);
+}
+
+/* ---- scroll reveal (DESIGN.md §6) ------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--d-reveal) var(--ease),
+    transform var(--d-reveal) var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- accessibility ---------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--s-3);
+  left: var(--s-3);
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform var(--d-micro) var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ---- reduced motion: freeze, never hide ------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
