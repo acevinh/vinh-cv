@@ -34,7 +34,6 @@ export default function About({ lang }: { lang: Lang }): JSX.Element {
           {FACTS.map((fact, i) => (
             <div
               key={fact.id}
-              data-fact={fact.id}
               className="facts__item reveal"
               style={{ '--reveal-delay': `${(i + 2) * 60}ms` } as CSSProperties}
             >

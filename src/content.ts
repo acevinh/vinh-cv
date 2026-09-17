@@ -144,20 +144,14 @@ export const ABOUT = {
   } satisfies LL,
 };
 
+/* A "Shipped: 195 changes merged to production" fact lived here for one commit
+   and was removed deliberately — not because it was wrong (it was counted, and
+   conservatively) but because it was the wrong KIND of number for this page.
+   It measured activity rather than impact, a recruiter cannot verify it, and it
+   sat directly under a paragraph about knowing what a change breaks before you
+   make it — a quality claim with a velocity number stapled to it. The published
+   app and the timeline already carry the weight. Don't put it back. */
 export const FACTS: Fact[] = [
-  /* Counted, not estimated: branches merged into the production branch of the
-     app's two repositories where every non-merge commit on the branch is mine.
-     Branches with a co-author (another 26) are deliberately EXCLUDED, so the
-     figure understates rather than flatters. Window: first merge 2025-07-14 to
-     2026-09-08. Recount before sending the CV anywhere — it only goes up. */
-  {
-    id: 'shipped',
-    label: { en: 'Shipped', vi: 'Đã ship' },
-    value: {
-      en: '195 changes merged to production in 14 months — 80 on the NestJS backend, 115 on the React frontend',
-      vi: '195 thay đổi đã merge lên production trong 14 tháng — 80 ở backend NestJS, 115 ở frontend React',
-    },
-  },
   {
     id: 'based',
     label: { en: 'Based in', vi: 'Nơi ở' },

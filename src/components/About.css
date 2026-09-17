@@ -54,20 +54,6 @@
   color: var(--text-1);
 }
 
-/* The one fact here that is a measurement rather than a biographical detail, so
-   it gets the full width instead of sharing a row — and 5 items in a 2-column
-   grid would otherwise leave an orphan anyway. Keyed on the id, not on
-   :first-child, so reordering FACTS cannot silently move the emphasis. */
-@media (min-width: 720px) {
-  .facts__item[data-fact='shipped'] {
-    grid-column: 1 / -1;
-  }
-
-  .facts__item[data-fact='shipped'] .facts__value {
-    max-width: none;
-  }
-}
-
 @media print {
   .about__paragraph + .about__paragraph {
     margin-block-start: 1.4mm;
