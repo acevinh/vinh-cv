@@ -83,29 +83,24 @@
             on the SHOPLINE App Store.
             <ul>
               <li>
-                Work the whole path a product takes — Shopify webhook, queued BullMQ jobs,
-                per-channel mapping, the Google Merchant Center and Meta Catalog calls, and the
-                approval verdict coming back. One NestJS codebase deploys as a dozen specialised
-                worker pods; MySQL is the source of truth, MongoDB holds the per-channel read
-                models.
+                Built the app's bulk disapproval workflow, its most-worked-on area — turning raw
+                Google and Meta rejection codes into a triaged issue list merchants can act on.
               </li>
               <li>
-                Built out the bulk feed-error and disapproval workflow across the API and the
-                React admin — turning raw Google and Meta rejection codes into a triaged issue
-                list with a fix path.
+                Cut false "not approved" verdicts by replacing a one-shot catalog check with a
+                retry chain and a merchant-visible ETA.
               </li>
               <li>
-                Made "pending approval" honest: replaced a one-shot catalog verdict, which
-                reported rejections that had never happened, with a retry chain and an ETA the
-                merchant can see.
+                Raised Shopify to Google product-category coverage to 99.5%, measured against
+                both published taxonomies rather than estimated.
               </li>
               <li>
-                Shipped feed-rule internals — Shopify to Google product-category mapping at 99.5%
-                measured coverage, plus per-market language and currency resolution.
+                Ended silent API-contract breakage by generating the React admin's client from
+                the backend's OpenAPI document.
               </li>
               <li>
-                Keep a 314-case QA ledger across seven feature areas, so a regression is caught
-                by re-running cases instead of by remembering them.
+                Work to a written process I maintain: a 314-case QA ledger that makes regressions
+                re-runnable, and the agent rules published as claude-skills.
               </li>
             </ul>
           </li>
