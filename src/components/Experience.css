@@ -285,6 +285,7 @@
    Shopify's bag, which keeps its greens because a grey Shopify bag is not the
    Shopify bag. See PlatformLogos.tsx. */
 .shipped__platform {
+  position: relative;
   grid-area: platform;
   justify-self: end;
   align-self: center;
@@ -296,6 +297,30 @@
   color: var(--text-1);
   transition: opacity var(--d-micro) var(--ease);
   opacity: 0.9;
+}
+
+/* A soft pool of light under the mark, dark theme only.
+   The pane's own top-right corner is the darkest part of the card, and both
+   marks were sitting in it — the Shopify bag especially, which is a mid-green
+   on near-black. This is the same light the glass rim implies, just gathered
+   where it is needed.
+   It rides on `.shipped__platform` rather than on the card's corner on purpose:
+   below 560px the mark drops underneath the product name, and a glow nailed to
+   the corner would light an empty corner while leaving the mark dark. */
+:root:not([data-theme='light']) .shipped__platform::before {
+  content: '';
+  position: absolute;
+  /* The box is deliberately far larger than the glow it carries. A radial that
+     fades out near its own edge shows that edge as a rounded rectangle — which
+     is what the first attempt did, and it read as a patch of grey rather than
+     as light. Give the falloff room and it lands on nothing. */
+  inset: -230% -34%;
+  background: radial-gradient(
+    46% 40% at 50% 50%,
+    rgba(233, 235, 242, 0.1),
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 .shipped:hover .shipped__platform {
