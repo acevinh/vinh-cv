@@ -89,24 +89,31 @@ VI bullets:
 - Xây giao diện Shopify embedded app bằng Polaris và Admin GraphQL API.
 - Vận hành AI agent theo bộ quy trình do tôi tự viết và duy trì — chính là bộ đã public ở `claude-skills`.
 
-#### Live product on the current role
+#### Live products on the current role
 
-Rendered as a link strip inside node 1. **He is a fullstack developer ON this app — never its
-author.** The app shipped in 2020, years before he joined; he has worked on it continuously since
-his July 2025 internship, which is the fact worth stating. "Developer on" is accurate and is what
-he asked for (2026-09-17); "created", "built" or "launched" are not.
+Rendered as a labelled group of link strips inside node 1. **He is a fullstack developer ON these
+apps — never their author.** The Shopify app shipped in 2020, years before he joined; he has worked
+on it continuously since his July 2025 internship, which is the fact worth stating. "Developer on"
+is accurate and is what he asked for (2026-09-17); "created", "built" or "launched" are not.
 
-| Field | Value |
-| --- | --- |
-| Name | Omega Google & Facebook Feed |
-| Link | https://apps.shopify.com/google-shopping-feed-pro |
-| Rating | 4.9 |
-| Reviews | 110 |
-| Live since | Nov 2020 |
+Each strip carries the store's own listing icon and that platform's brand mark, so a reader sees
+"shipped commerce products" before reading a word. Marks and icons are dropped in print.
+
+| Field | Shopify app | SHOPLINE app |
+| --- | --- | --- |
+| Name | Omega Google & Facebook Feed | FeedNexa — Multiple Feed |
+| Link | https://apps.shopify.com/google-shopping-feed-pro | https://apps.shopline.com/detail/feednexa_multiple_feed |
+| Rating | 4.9 | **deliberately not shown** |
+| Reviews | 110 | 1 |
+| Live since | Nov 2020 | newer, smaller |
+
+🔴 **The Shopline rating is omitted on purpose.** Its listing reads "5 (1)" — five stars from a
+single review. Printing "5★" off that is true and would not survive thirty seconds of checking.
+`ShippedProduct.rating` is optional for exactly this reason; leave it unset unless the sample behind
+the number is worth citing.
 
 - EN label: *Fullstack developer on* · VI label: *Lập trình viên fullstack của*
-- EN blurb: *A published Shopify app, live since 2020. I've worked on it since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.*
-- VI blurb: *Ứng dụng Shopify đã phát hành, chạy thật từ 2020. Tôi làm trên chính sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.*
+- Shopify meta: *Live since 2020* · Shopline meta: *Google · Meta · TikTok · Pinterest · Bing*
 
 ⚠️ **Two things to re-check before this CV goes anywhere.** The rating and review count are public
 figures that drift, so verify them against the listing. And the store lists the publisher as

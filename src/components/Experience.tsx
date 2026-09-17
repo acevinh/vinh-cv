@@ -2,24 +2,44 @@ import type { CSSProperties } from 'react';
 
 import { EXPERIENCE, TIMELINE, type Lang, type ShippedProduct } from '../content';
 import { t, tl } from '../hooks/useLang';
+import { ShopifyMark, ShoplineMark } from './PlatformLogos';
 
 import './Experience.css';
 
+const STORE_NAME: Record<ShippedProduct['platform'], string> = {
+  shopify: 'Shopify',
+  shopline: 'SHOPLINE',
+};
+
 /**
- * The live product behind the current role.
+ * One live product behind the current role.
  *
  * A CV that says "I ship product-grade web apps" with nothing shippable on the
- * page is asking to be taken on faith. This is the one place the claim becomes
- * checkable in a click — so it is a real link, carrying the store's own public
- * icon and rating. The label says *developer on*, which is what he is; the app
- * shipped in 2020, years before he joined, so it never claims authorship.
+ * page is asking to be taken on faith. Each of these is a real link to a public
+ * store listing, carrying that store's own icon and its platform mark — which
+ * together say "this person works on shipped commerce products" faster than any
+ * sentence could. The label says *developer on*, which is what he is; the
+ * Shopify app shipped in 2020, years before he joined, so nothing here claims
+ * authorship.
  *
- * The icon is the store's published listing image and is the only raster on the
- * page. It is decorative here — the product name sits next to it in text — so
- * it is `alt=""`, and it is dropped in print, where the strip collapses to one
- * running line (Experience.css @media print).
+ * `rating` is optional and the Shopline app deliberately has none: its listing
+ * reads "5 (1)". Printing five stars off a single review is the kind of true
+ * statement that costs you the interview.
+ *
+ * The icons are the stores' published listing images — decorative, since the
+ * product name sits beside them in text — and both they and the platform marks
+ * are dropped in print, where each row collapses to one running line.
  */
-function ShippedInto({ product, lang }: { product: ShippedProduct; lang: Lang }): JSX.Element {
+function ShippedProductRow({
+  product,
+  lang,
+}: {
+  product: ShippedProduct;
+  lang: Lang;
+}): JSX.Element {
+  const store = STORE_NAME[product.platform];
+  const Mark = product.platform === 'shopify' ? ShopifyMark : ShoplineMark;
+
   return (
     <a
       className="shipped glass glass--interactive"
@@ -28,33 +48,48 @@ function ShippedInto({ product, lang }: { product: ShippedProduct; lang: Lang })
       rel="noopener noreferrer"
     >
       <span className="shipped__mark" aria-hidden="true">
-        <img src="/omega-feed-icon.png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+        <img src={product.icon} alt="" width="512" height="512" loading="lazy" decoding="async" />
       </span>
-
-      <span className="shipped__label mono">{t(EXPERIENCE.productLabel, lang)}</span>
 
       <span className="shipped__name">{product.name}</span>
 
+      <span className="shipped__platform">
+        {/* Optically matched, not numerically: Shopify's lockup is a bag plus a
+            lowercase wordmark, SHOPLINE's is all-caps, so equal heights would
+            make the all-caps mark look larger. */}
+        <Mark className="shipped__logo" height={product.platform === 'shopify' ? 18 : 13} />
+      </span>
+
       <span className="shipped__meta mono">
-        <svg
-          className="shipped__star"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          stroke="none"
-          aria-hidden="true"
-        >
-          <path d="M10 1.8l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5 2.7 1-5.6-4.1-3.9 5.6-.8z" />
-        </svg>
-        {product.rating}
-        <span className="shipped__sep" aria-hidden="true">
-          ·
-        </span>
-        {product.reviews} {t(EXPERIENCE.productReviews, lang)}
+        {product.rating ? (
+          <>
+            <svg
+              className="shipped__star"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              stroke="none"
+              aria-hidden="true"
+            >
+              <path d="M10 1.8l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5 2.7 1-5.6-4.1-3.9 5.6-.8z" />
+            </svg>
+            {product.rating}
+            <span className="shipped__sep" aria-hidden="true">
+              ·
+            </span>
+            {product.reviews} {t(EXPERIENCE.productReviews, lang)}
+            <span className="shipped__sep" aria-hidden="true">
+              ·
+            </span>
+          </>
+        ) : null}
+        {t(product.meta, lang)}
       </span>
 
       <span className="shipped__blurb">{t(product.blurb, lang)}</span>
 
-      <span className="visually-hidden">{t(EXPERIENCE.productView, lang)}</span>
+      <span className="visually-hidden">
+        {t(EXPERIENCE.productView, lang).replace('{store}', store)}
+      </span>
     </a>
   );
 }
@@ -93,7 +128,16 @@ export default function Experience({ lang }: { lang: Lang }): JSX.Element {
                   ))}
                 </ul>
 
-                {node.product ? <ShippedInto product={node.product} lang={lang} /> : null}
+                {node.products?.length ? (
+                  <div className="shipped-group">
+                    <p className="shipped-group__label mono">
+                      {t(EXPERIENCE.productLabel, lang)}
+                    </p>
+                    {node.products.map((product) => (
+                      <ShippedProductRow key={product.id} product={product} lang={lang} />
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </li>
           ))}

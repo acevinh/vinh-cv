@@ -219,23 +219,36 @@
    deliberately as a whole-block anchor rather than a card with a link inside:
    the entire strip is the target. */
 
+/* Two products now, so the label is promoted out of each card and states the
+   relationship once for both. */
+.shipped-group {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+}
+
+.shipped-group__label {
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 .shipped {
   display: grid;
   grid-template-areas:
-    'mark  label  meta'
-    'mark  name   name'
+    'mark  name   platform'
+    'mark  meta   meta'
     'blurb blurb  blurb';
   grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
   gap: var(--s-1) var(--s-4);
-  margin-top: var(--s-5);
   padding: var(--s-4) var(--s-5);
   border-radius: var(--r-md);
 }
 
 /* The store's own listing icon, mounted rather than pasted: the same hairline
    and specular rim the glass uses, so a flat raster square reads as a tile set
-   into the page's material instead of a sticker on top of it. It is the only
-   image on the page. */
+   into the page's material instead of a sticker on top of it. */
 .shipped__mark {
   grid-area: mark;
   align-self: center;
@@ -256,15 +269,9 @@
   object-fit: cover;
 }
 
-.shipped__label {
-  grid-area: label;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
 .shipped__name {
   grid-area: name;
+  align-self: end;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--fs-h3);
@@ -272,13 +279,42 @@
   color: var(--text-1);
 }
 
+/* The platform mark, right-aligned like a shelf label: it answers "which store
+   is this on" at a glance, which is the whole reason it is here. Both marks are
+   the vendors' own SVGs and both follow --text-2 through currentColor — except
+   Shopify's bag, which keeps its greens because a grey Shopify bag is not the
+   Shopify bag. See PlatformLogos.tsx. */
+.shipped__platform {
+  grid-area: platform;
+  justify-self: end;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  /* --text-1, not --text-2: SHOPLINE's mark is a thin wordmark, and at the
+     secondary ink it disappeared into the dark theme entirely. A platform mark
+     that cannot be read is worse than no platform mark. */
+  color: var(--text-1);
+  transition: opacity var(--d-micro) var(--ease);
+  opacity: 0.9;
+}
+
+.shipped:hover .shipped__platform {
+  opacity: 1;
+}
+
+.shipped__logo {
+  display: block;
+  width: auto;
+}
+
 .shipped__meta {
   grid-area: meta;
+  align-self: start;
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s-1);
   color: var(--text-2);
-  white-space: nowrap;
 }
 
 /* The star is the only filled glyph on the page; keep it the text colour so it
@@ -300,20 +336,26 @@
   color: var(--text-2);
 }
 
-@media (max-width: 460px) {
-  /* The rating cannot share a row with the label at this width without one of
-     them wrapping mid-token. */
+@media (max-width: 560px) {
+  /* The platform mark cannot share a row with the product name at this width —
+     SHOPLINE's is 130px of wordmark on its own. It drops under the name, which
+     also puts it directly beside the store icon it belongs to. */
   .shipped {
     grid-template-areas:
-      'mark  label'
       'mark  name'
+      'mark  platform'
       'meta  meta'
       'blurb blurb';
     grid-template-columns: auto minmax(0, 1fr);
   }
 
+  .shipped__platform {
+    justify-self: start;
+    align-self: start;
+  }
+
   .shipped__meta {
-    margin-top: var(--s-1);
+    margin-top: var(--s-2);
   }
 }
 
@@ -382,15 +424,25 @@
   /* On paper the strip becomes one running line so print.css can append the
      store URL after it — a recruiter reading the PDF can still type it in.
      The blurb explains the link on screen and is redundant next to the URL. */
-  .shipped {
+  .shipped-group {
     display: block;
     margin-block-start: 1.2mm;
+  }
+
+  .shipped-group__label::after {
+    content: ' ';
+  }
+
+  .shipped {
+    display: block;
+    margin-block-start: 0;
     padding: 0;
     font-size: var(--fs-small);
   }
 
-  .shipped__label::after {
-    content: ' ';
+  /* Two products on paper: without this they run together into one sentence. */
+  .shipped + .shipped {
+    margin-block-start: 0.8mm;
   }
 
   .shipped__name {
@@ -407,9 +459,11 @@
     content: ' — ';
   }
 
-  /* On paper the strip is one running line, so the mounted tile has nowhere to
-     sit — and a 46px raster costs ink for a product already named in text. */
+  /* On paper each strip is one running line, so the mounted tile has nowhere to
+     sit — and a raster icon plus two brand logos cost ink for two products
+     already named in text, whose store URLs print underneath anyway. */
   .shipped__mark,
+  .shipped__platform,
   .shipped__star,
   .shipped__blurb {
     display: none !important;

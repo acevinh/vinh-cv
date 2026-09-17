@@ -193,9 +193,11 @@
      5.17:1 at the worst sample found across the page (an aurora peak under the
      timeline). The earlier #5d6579 passed on paper and measured 3.08:1 in real
      pixels — the token background is not what anyone actually reads against. */
-  /* 4.55:1 at the worst phase is passing but thin, and the blobs drift for the
-     whole visit — a value that only just clears at one instant does not. */
-  --text-3: #434957;
+  /* Darkened twice now. 4.55:1 was passing but thin, and after the project
+     cards changed the label run measured 4.37:1 at one point in the blob cycle.
+     The blobs drift for the whole visit, so a token that only just clears at
+     one instant does not clear at all. */
+  --text-3: #3c4250;
   /* Light's pill is a near-white fill, so the body token is already dark
      enough against it — measured 0 runs under AA in this theme. */
   --nav-ink: #454e61;

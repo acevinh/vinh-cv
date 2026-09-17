@@ -15,16 +15,28 @@ export type LL = { en: string[]; vi: string[] };
 /**
  * A live, publicly verifiable product the candidate works on.
  *
- * Deliberately phrased as work *on* a product, never as authorship: the app
- * shipped in 2020, years before he joined. `rating` and `reviews` are public
+ * Deliberately phrased as work *on* a product, never as authorship: the Shopify
+ * app shipped in 2020, years before he joined. `rating` and `reviews` are public
  * figures from the store listing and go stale — re-check them before sending
  * the CV anywhere.
  */
 export interface ShippedProduct {
+  id: string;
   name: string;
   href: string;
-  rating: string;
-  reviews: string;
+  /** Selects the platform mark rendered next to the name. */
+  platform: 'shopify' | 'shopline';
+  /** The store's own listing icon, served from /public. */
+  icon: string;
+  /**
+   * OMITTED ON PURPOSE when the public rating would mislead. The Shopline app
+   * is "5 stars (1 review)": true, and dishonest to print as 5 stars. A number
+   * only earns its place here when the sample behind it is worth citing.
+   */
+  rating?: string;
+  reviews?: string;
+  /** One short factual line under the name — never a claim, always checkable. */
+  meta: L;
   blurb: L;
 }
 
@@ -37,8 +49,8 @@ export interface TimelineNode {
   /** Exactly one node may be current. It carries the only accent dot on the page. */
   current?: boolean;
   bullets: LL;
-  /** Only the current role carries this. */
-  product?: ShippedProduct;
+  /** Only the current role carries these. */
+  products?: ShippedProduct[];
 }
 
 export interface SkillGroup {
@@ -167,7 +179,8 @@ export const EXPERIENCE = {
     vi: 'Lập trình viên fullstack của',
   } satisfies L,
   productReviews: { en: 'reviews', vi: 'đánh giá' } satisfies L,
-  productView: { en: 'View on the Shopify App Store', vi: 'Xem trên Shopify App Store' } satisfies L,
+  /** Screen-reader-only; `{store}` is filled with the platform's own name. */
+  productView: { en: 'View on the {store} App Store', vi: 'Xem trên {store} App Store' } satisfies L,
   education: {
     school: 'FPT Polytechnic',
     field: {
@@ -200,16 +213,38 @@ export const TIMELINE: TimelineNode[] = [
         'Vận hành AI agent theo bộ quy trình do tôi tự viết và duy trì — chính là bộ đã public ở claude-skills.',
       ],
     },
-    product: {
-      name: 'Omega Google & Facebook Feed',
-      href: 'https://apps.shopify.com/google-shopping-feed-pro',
-      rating: '4.9',
-      reviews: '110',
-      blurb: {
-        en: "A published Shopify app, live since 2020. I've worked on it since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.",
-        vi: 'Ứng dụng Shopify đã phát hành, chạy thật từ 2020. Tôi làm trên chính sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.',
+    products: [
+      {
+        id: 'omega-feed',
+        name: 'Omega Google & Facebook Feed',
+        href: 'https://apps.shopify.com/google-shopping-feed-pro',
+        platform: 'shopify',
+        icon: '/omega-feed-icon.png',
+        rating: '4.9',
+        reviews: '110',
+        meta: { en: 'Live since 2020', vi: 'Chạy thật từ 2020' },
+        blurb: {
+          en: "I've worked on this one since my internship — feature work, refactors and day-to-day development across the NestJS API and the React admin UI.",
+          vi: 'Tôi làm trên sản phẩm này từ kỳ thực tập — phát triển tính năng, refactor và xử lý công việc hằng ngày trên cả API NestJS lẫn giao diện quản trị React.',
+        },
       },
-    },
+      {
+        id: 'feednexa-shopline',
+        name: 'FeedNexa — Multiple Feed',
+        href: 'https://apps.shopline.com/detail/feednexa_multiple_feed',
+        platform: 'shopline',
+        icon: '/shopline-feed-icon.png',
+        // No rating: the listing says 5 stars from a single review.
+        meta: {
+          en: 'Google · Meta · TikTok · Pinterest · Bing',
+          vi: 'Google · Meta · TikTok · Pinterest · Bing',
+        },
+        blurb: {
+          en: 'The same problem on a second commerce platform — generating and syncing XML product feeds out to the ad channels. Newer and smaller than the Shopify app, and the reason I can say the domain transfers rather than just the codebase.',
+          vi: 'Cùng bài toán đó trên một nền tảng thương mại khác — sinh và đồng bộ feed sản phẩm XML sang các kênh quảng cáo. Mới hơn và quy mô nhỏ hơn app Shopify, và là lý do tôi có thể nói rằng cái chuyển giao được là hiểu biết về lĩnh vực, không chỉ là codebase.',
+        },
+      },
+    ],
   },
   {
     id: 'probation',
