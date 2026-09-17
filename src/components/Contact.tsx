@@ -80,6 +80,13 @@ function IconArrow() {
 export default function Contact({ lang }: { lang: Lang }) {
   const { copied, copy } = useCopy();
   const mailto = `mailto:${IDENTITY.email}?subject=${encodeURIComponent(t(CONTACT.emailSubject, lang))}`;
+  // Derived, not a second copy of the address: below about 340px even the
+  // smallest size in the clamp cannot hold this on one line, and a break has to
+  // land somewhere. `<wbr>` offers the browser the only sensible place — before
+  // the @ — so the fallback reads as two halves of an address rather than as
+  // `work.vinh.vn@gmail.c / om`. It contributes no character, so selecting and
+  // copying the address still yields exactly IDENTITY.email.
+  const [emailUser, emailDomain] = IDENTITY.email.split('@');
 
   return (
     <section id="contact" className="section contact">
@@ -99,7 +106,10 @@ export default function Contact({ lang }: { lang: Lang }) {
             <div className="contact__address-row">
               <a className="contact__address" href={mailto}>
                 <IconMail />
-                <span className="contact__address-text">{IDENTITY.email}</span>
+                <span className="contact__address-text">
+                  {emailUser}
+                  <wbr />@{emailDomain}
+                </span>
               </a>
             </div>
 

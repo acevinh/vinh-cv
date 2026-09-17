@@ -45,7 +45,19 @@
   align-items: center;
   gap: var(--s-3);
   font-family: var(--font-mono);
-  font-size: var(--fs-h3);
+  /* Sized to FIT ON ONE LINE, not chosen by eye — it was breaking mid-word as
+     `work.vinh.vn@gmail.c / om`, on phones and on wide desktops both.
+
+     The wide-desktop half is the surprising one: the room does not grow with
+     the window. `--gutter` is 5vw while `--content-max` is capped at 1120px, so
+     the panel is NARROWER at 1920 (598px) than at 1266 (647px) — while a
+     clamped font size has long since hit its ceiling and stopped shrinking.
+     Measured, `--fs-h2` needed 627px against 598px of room.
+
+     22 monospace characters plus the envelope and its gap come to about
+     14em + 12px, and the tightest spots in the whole range are 900px wide
+     (510px of room) and 1920px (598px). Both clamps fall out of that. */
+  font-size: clamp(1rem, 4.4vw, var(--fs-h3));
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--text-1);
@@ -85,7 +97,7 @@
 
 @media (min-width: 768px) {
   .contact__address {
-    font-size: var(--fs-h2);
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
     line-height: 1.2;
   }
 }
