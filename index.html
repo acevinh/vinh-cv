@@ -83,24 +83,29 @@
             on the SHOPLINE App Store.
             <ul>
               <li>
-                Built the app's bulk disapproval workflow, its most-worked-on area — turning raw
-                Google and Meta rejection codes into a triaged issue list merchants can act on.
+                Fullstack on a feed app live since 2020 — a NestJS API, a dozen queue workers and
+                a React admin that push merchant catalogues to Google, Meta, TikTok, Bing and
+                Pinterest.
               </li>
               <li>
-                Cut false "not approved" verdicts by replacing a one-shot catalog check with a
-                retry chain and a merchant-visible ETA.
+                Own the approval side: read each channel's verdict back per product, group the
+                rejections by cause, attach a fix path. A wall of rejected items becomes a list a
+                merchant can work through.
               </li>
               <li>
-                Raised Shopify to Google product-category coverage to 99.5%, measured against
-                both published taxonomies rather than estimated.
+                Ad channels index asynchronously, so a status check can run before the catalogue
+                is queryable. Replaced the one-shot verdict with a retry chain and a published
+                ETA, so pending stops reading as rejected.
               </li>
               <li>
-                Ended silent API-contract breakage by generating the React admin's client from
-                the backend's OpenAPI document.
+                Built the multi-account, multi-feed and multi-market setup — several ad accounts
+                per channel, per-market feeds carrying their own language and currency, and a
+                category mapping measured at 99.5% coverage.
               </li>
               <li>
-                Work to a written process I maintain: a 314-case QA ledger that makes regressions
-                re-runnable, and the agent rules published as claude-skills.
+                Work to a written process I maintain: a generated API client so a contract change
+                cannot be missed, and a 314-case QA ledger so regressions get re-run rather than
+                remembered.
               </li>
             </ul>
           </li>

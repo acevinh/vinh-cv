@@ -206,18 +206,18 @@ export const TIMELINE: TimelineNode[] = [
     current: true,
     bullets: {
       en: [
-        'Built the app’s bulk disapproval workflow, its most-worked-on area — turning raw Google and Meta rejection codes into a triaged issue list merchants can act on.',
-        'Cut false “not approved” verdicts by replacing a one-shot catalog check with a retry chain and a merchant-visible ETA.',
-        'Raised Shopify → Google product-category coverage to 99.5%, measured against both published taxonomies rather than estimated.',
-        'Ended silent API-contract breakage by generating the React admin’s client from the backend’s OpenAPI document.',
-        'Work to a written process I maintain: a 314-case QA ledger that makes regressions re-runnable, and the agent rules published as claude-skills.',
+        'Fullstack on a feed app live since 2020 — a NestJS API, a dozen queue workers and a React admin that push merchant catalogues to Google, Meta, TikTok, Bing and Pinterest.',
+        'Own the approval side: read each channel’s verdict back per product, group the rejections by cause, attach a fix path. A wall of rejected items becomes a list a merchant can work through.',
+        'Ad channels index asynchronously, so a status check can run before the catalogue is queryable. Replaced the one-shot verdict with a retry chain and a published ETA, so pending stops reading as rejected.',
+        'Built the multi-account, multi-feed and multi-market setup — several ad accounts per channel, per-market feeds carrying their own language and currency, and a category mapping measured at 99.5% coverage.',
+        'Work to a written process I maintain: a generated API client so a contract change cannot be missed, and a 314-case QA ledger so regressions get re-run rather than remembered.',
       ],
       vi: [
-        'Dựng luồng xử lý sản phẩm bị từ chối hàng loạt, mảng tôi làm nhiều nhất — biến mã từ chối thô của Google và Meta thành danh sách lỗi merchant xử lý được.',
-        'Giảm các phán quyết “không được duyệt” sai, bằng cách thay phép kiểm catalog một lần bằng chuỗi retry kèm ETA merchant nhìn thấy được.',
-        'Nâng độ phủ ánh xạ category Shopify → Google lên 99,5%, đo trên cả hai bộ taxonomy đã công bố chứ không ước lượng.',
-        'Chấm dứt việc hợp đồng API vỡ âm thầm, bằng cách sinh client cho giao diện quản trị React từ tài liệu OpenAPI của backend.',
-        'Làm theo quy trình tự viết và duy trì: ledger QA 314 case giúp chạy lại được regression, và bộ quy tắc agent đã public ở claude-skills.',
+        'Fullstack trên một app feed chạy thật từ 2020 — API NestJS, hơn chục worker hàng đợi và giao diện quản trị React, đẩy catalog của merchant sang Google, Meta, TikTok, Bing và Pinterest.',
+        'Phụ trách mảng duyệt sản phẩm: đọc phán quyết của từng kênh trả về theo từng sản phẩm, gom lỗi bị từ chối theo nguyên nhân, gắn đường sửa. Một bức tường lỗi trở thành danh sách merchant xử lý được.',
+        'Các kênh nạp dữ liệu bất đồng bộ, nên phép kiểm trạng thái có thể chạy trước khi catalog tra cứu được. Thay phán quyết một lần bằng chuỗi retry kèm ETA công bố, để “đang chờ” thôi bị đọc thành “bị từ chối”.',
+        'Dựng cơ chế nhiều tài khoản, nhiều feed, nhiều thị trường — mỗi kênh nhiều tài khoản quảng cáo, mỗi thị trường một feed mang ngôn ngữ và tiền tệ riêng, kèm bảng ánh xạ category đo được 99,5% độ phủ.',
+        'Làm theo quy trình tự viết và duy trì: API client sinh tự động để không thể bỏ sót thay đổi hợp đồng, và ledger QA 314 case để regression được chạy lại chứ không phải nhớ lại.',
       ],
     },
     products: [
